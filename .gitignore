@@ -1,0 +1,4 @@
+/bot/config
+*.db
+__pycache__
+/bot/utils/data_database.py
