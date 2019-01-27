@@ -4,7 +4,7 @@ import sys, traceback, platform
 sys.path.append('./utils')
 
 # COGS
-initial_extensions = ['cogs.registration', 'cogs.setup', 'cogs.administration']
+initial_extensions = ['cogs.registration', 'cogs.setup', 'cogs.administration', 'cogs.help']
 
 # Load configs
 configFile = open('config')
@@ -17,6 +17,7 @@ config = {
 }
 
 bot = commands.Bot(command_prefix = config['DATA']['prefix'])
+bot.remove_command('help')
 
 @bot.event
 async def on_ready():
