@@ -1,66 +1,80 @@
 import discord
 from discord.ext import commands
-import sys, asyncio, perms
+import sys, asyncio
 sys.path.append('../utils')
 import functions as f
-import data_database as db
 
 
-
+configFile = open('config')
+configs = configFile.readlines()
+config = {
+    'OWNER': {
+        'id': (configs[3].split()[1]).split('\n')[0]
+    }
+}
 
 class AdministrationCog:
     
     def __init__(self, bot):
         self.bot = bot
     
+
+
+
+    # Can be used by bot owner only.
+    # Command purges the database of all data
     @commands.command()
-    async def test(self, ctx):
-        settings = f.getSettings(ctx.guild.id);
+    async def resetDatabase(self, ctx):
+        if (ctx.message.author.id != int(config['OWNER']['id'])):
+            return
+
+        f.databaseReset()
+        await ctx.send('{}, database reset'.format(ctx.message.author.mention))
 
 
+    # Gets the alliance settings associated with this server. The results are made 
+    # into an embed, and set privately to the author. Command can only be used by
+    # a user with admin perms on the given server
 
-
-
+    # PARAMAS
+    #  - allianceId: The alliance id the user is getting settings for 
     @commands.command()
-    async def settings(self, ctx):
+    async def settings(self, ctx, allianceId=''):
+
+        if not allianceId:
+            err =  '{}, Missing alliance ID paramater.'.format(ctx.message.author.mention)
+            await ctx.send(err)
+            return
 
         if not ctx.message.author.guild_permissions.administrator:
             err =  '{}, You do not have permission to use this command.'.format(ctx.message.author.mention)
             await ctx.send(err)
             return
 
+        if not f.isInAlliance(ctx.guild.id, allianceId):
+            err =  '{}, that allianceId is not registered for your server'.format(ctx.message.author.mention)
+            await ctx.send(err)
+            return
 
         title = 'DATA Bot Settings'
         footerText = '*DATA Bot Setup: url-to-code, bot-help-server*'
-        settings = f.getSettings(ctx.guild.id); 
-
-        print(settings)
+        settings = f.getSettings(ctx.guild.id, allianceId.upper(), ctx.guild.roles, ctx.guild.categories) 
         summary = '[DECRYPTING] sensitive data... ...\n\n'
-        summary += '**ALLIANCE:** {}\n\n'.format(settings['alliance'])
-
-        if settings['manualRegister']:
-            summary += '**[YES]** [NO] Users can self register\n'
-        else:
-            summary += '[YES] **[NO]** Users can self register\n'
-
-        if settings['createChannel']:
-            summary += '**[YES]** [NO] Create private channel\n\n'
-        else:
-            summary += '[YES] **[NO]** Create private channel\n\n'
-
-        summary += '**New Member Role:** {}\n'.format(settings['memberRole'])
-        summary += '**New Ambassador Role:** {}\n'.format(settings['ambassadorRole'])
-        if settings['channelCategory'] != None:
-            summary += '**Private Channel Category:** {}\n'.format(settings['channelCategory'])
-
-        summary += '\n**REGISTER COMMAND**\n*Roles that can set up other users:*\n'
-        for r in settings['canRegisterUserRoles']:
-            summary += '× {}\n'.format(r)
-        summary += '\n'
-
-        summary += '**PRIVATE CHANNEL PERMS**\n*Roles that can set up other users:*\n'
-        for r in settings['canAccessPrivateChannelRoles']:
-            summary += '× {}\n'.format(r)
+        
+        summary += f.getSetupSummary(
+            '{} Settings'.format(ctx.guild.name),
+            ctx.guild.id,
+            ctx.guild.name,
+            allianceId.upper(),
+            settings["manualRegister"],
+            settings["createChannel"],
+            settings["channelCategory"],
+            settings["memberRoles"],
+            settings["ambassadorRoles"],
+            settings["allyRoles"], 
+            settings["canRegisterUserRoles"],
+            settings["canAccessPrivateChannelRoles"]
+        )
 
         embed = discord.Embed(title=title, description=summary, color=1234123)
         embed.set_footer(text=footerText)
@@ -71,7 +85,10 @@ class AdministrationCog:
 
           
     # Function deletes the last 'n' amount of messages
-    # in same channel as the command was given in.
+    # in same channel as the command was given in. Must be administrator
+
+    #PARAMS
+    # -number - the number of messages to delete, not including this command message
     @commands.command()
     async def clear(self, ctx, number=0):
 

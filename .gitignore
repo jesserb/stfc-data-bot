@@ -2,3 +2,6 @@
 *.db
 __pycache__
 /bot/utils/data_database.py
+/bot/utils/test_functions.py
+.vscode/
+bot/.vscode/
