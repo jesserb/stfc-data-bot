@@ -5,3 +5,4 @@ __pycache__
 /bot/utils/test_functions.py
 .vscode/
 bot/.vscode/
+stfc_bot_data.pem

@@ -120,7 +120,7 @@ class SetupCog:
         # If user opted to copy the settings from their other servers alliance settings,
         # simply ask them to confirm the settings, and save to database or cancel.
         if not newSetup:
-            settings = f.getSettings(ctx.guild.id, existingAllianceID.upper(), ctx.guild.roles, ctx.guild.categories);             
+            settings = f.getSettings(ctx.guild.id, existingAllianceID.upper(), ctx.guild.roles, ctx.guild.categories)             
             summary = f.getSetupSummary(
                 'Summary of Setup',
                 ctx.guild.id,

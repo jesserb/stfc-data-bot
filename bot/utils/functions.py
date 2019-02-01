@@ -3,9 +3,100 @@ import data_database as db
 from constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
 
 
+
+
+
 ###################################################################
 ### GET FUNCTIONS #################################################
 ###################################################################
+
+
+
+# emojis: List of dicrod emoji objects
+#  emoji: String, representing the name of emoji to get
+def getEmoji(emojis, emoji):
+    for e in emojis:
+        if e.name.lower() == emoji.lower():
+            return e
+    return ''
+
+
+# resource: String reperesentation of an stfc resource
+#     tier: Integer value for stfc resouce grade (values 1, 2, 3, and 4)
+#   system: String representationf of the stfc system the resource is located in
+def getResourceReliability(resource, tier, system):
+    addition = ''
+    sql = '''
+        SELECT ReliabilityScore
+        FROM Resources
+        WHERE Resource="{}"
+        AND System="{}"
+    '''.format(resource, system)
+    if tier:
+        addition = ' AND AND Tier={}'.format(tier)
+
+    res = db.queryDatabase(sql + addition)
+    return res[0][0]
+
+
+# resource: String reperesentation of an stfc resource
+#     tier: Integer value for stfc resouce grade (values 1, 2, 3, and 4)
+#   region: String representation of the stfc region the resource is located in
+def getResourceResults(resource, tier, region):
+    sql = 'select * FROM Resources'
+    whereClause = ' WHERE'
+    filter = ''
+    numFilters = 0
+    if resource:
+        numFilters += 1
+        filter += ' Resource="{}"'.format(resource)
+    if tier:
+        numFilters += 1
+        if numFilters > 1:
+            filter += ' AND Tier="{}"'.format(int(tier))
+        else:
+            filter += ' Tier="{}"'.format(int(tier))
+    if region:
+        numFilters += 1
+        if numFilters > 1:
+            filter += ' AND Region="{}"'.format(region)
+        else:
+            filter += ' region="{}"'.format(region)
+
+    if numFilters > 0:
+        sql = sql + whereClause
+    
+    return db.queryDatabase(sql+filter+' ORDER BY Resource == "Dilithium", Resource, Tier DESC, Region')
+
+
+#     args: A list of arguments, representing a resources search query
+#   footer: a string value of the footer for the resources embed
+# resource: String reperesentation of an stfc resource
+#     tier: Integer value for stfc resouce grade (values 1, 2, 3, and 4)
+#   system: String representationf of the stfc system the resource is located in
+def getSearchQuerys(args, footer, resource, region, tier):
+    footer = 'FILTERS:'
+
+    resource = tier = region = ''
+    # loop through search parameters, and set resource, region, and tier variable
+    for arg in args:
+        arg = str(arg)
+        if arg.lower() == 'crystal' or arg.lower() == 'ore' or arg.lower() == 'gas' or arg.lower() == 'dilithium':
+            footer += ' "{}" '.format(arg) # add filter name to footer for info purposes
+            resource = arg
+        if arg.lower() == 'federation' or arg.lower() == 'romulan' or arg.lower() == 'klingon' or arg.lower() == 'neutral':
+            footer += ' "{}" '.format(arg) # add filter name to footer for info purposes
+            region = arg
+        if arg[0] == '1' or arg[0] == '2' or arg[0] == '3' or arg[0] == '4':
+            footer += ' "grade {}" '.format(arg[0]) # add filter name to footer for info purposes
+            tier = arg[0]
+    
+    # If user did not include any search paramaters, then filters is none
+    if not len(args):
+        footer += 'none'
+
+    return footer, resource, region, tier
+
 
 #  nickname: string representation of users server nickname
 def getAllianceIdFromNick(nickname):
@@ -95,6 +186,7 @@ def getCategory(channels, category):
             return c
     return None
 
+
 # serverId: id for current server, from discord guild object
 def getAllianceIds(serverId):
     sql = '''
@@ -105,6 +197,7 @@ def getAllianceIds(serverId):
     res = db.queryDatabase(sql)
     return reduceResults(res)
 
+
 # serverId: id for current server, from discord guild object
 def getAllianceName(serverId):
     sql = '''
@@ -114,6 +207,7 @@ def getAllianceName(serverId):
     '''.format(serverId)
     res = db.queryDatabase(sql)
     return res[0][0]
+
 
 # serverId: id for current server, from discord guild object
 def getMemberRoles(serverId, allianceId):
@@ -126,6 +220,7 @@ def getMemberRoles(serverId, allianceId):
     '''.format(serverId, allianceId.upper())
     return reduceResults(db.queryDatabase(sql))
 
+
 # serverId: id for current server, from discord guild object
 def getAmbassadorRoles(serverId, allianceId):
     sql = '''
@@ -137,6 +232,7 @@ def getAmbassadorRoles(serverId, allianceId):
     '''.format(serverId, allianceId.upper())
     return reduceResults(db.queryDatabase(sql))
 
+
 # serverId: id for current server, from discord guild object
 def getAllyRoles(serverId, allianceId):
     sql = '''
@@ -147,6 +243,7 @@ def getAllyRoles(serverId, allianceId):
         AND R.AllyRole=1
     '''.format(serverId, allianceId.upper())
     return reduceResults(db.queryDatabase(sql))
+
 
 # serverId: id for current server, from discord guild object
 def getAmbassadorCategory(serverId):
@@ -165,6 +262,7 @@ def getAmbassadorCategory(serverId):
 ###################################################################
 
 
+
 # members: list of discord member objects
 #  member: string name of member
 def isUser(member, members):
@@ -172,6 +270,7 @@ def isUser(member, members):
         if (m.name).lower() == member.lower():
             return True
     return False
+
 
 # roles: list of discord role objects
 #  role: string name of role
@@ -181,6 +280,7 @@ def Is_Role(roles, role):
             return True
     return False
 
+
 # channels: list of discord channel objects
 #  channel: string name of channel
 def channelExists(channels, channel):
@@ -188,6 +288,7 @@ def channelExists(channels, channel):
         if c.name.lower() == channel.lower():
             return True
     return False
+
 
 # selectedRoles: list of dictionaries
 #                parameter role: discord role object
@@ -199,6 +300,7 @@ def selectedRole(selectedRoles, role):
             return r['selected']
     return False
 
+
 # serverId: id for current server, from discord guild object
 def manualRegisterAllowed(serverId):
     sql = '''
@@ -209,6 +311,7 @@ def manualRegisterAllowed(serverId):
     
     res = db.queryDatabase(sql)
     return res[0]
+
 
 # serverId: id for current server, from discord guild object
 def createChannelAllowed(serverId):
@@ -222,6 +325,7 @@ def createChannelAllowed(serverId):
     if len(res):
         return res[0][0]
     return False
+
 
 # serverId: id for current server, from discord guild object
 #    roles: list of discord role objects
@@ -240,6 +344,7 @@ def hasRegisterCommandPermission(serverId, allianceId, roles):
             return True
     return False
 
+
 # serverId: id for current server, from discord guild object
 #     role: discord role object
 def canAccessPrivateChannel(serverId, allianceId, role):
@@ -255,6 +360,7 @@ def canAccessPrivateChannel(serverId, allianceId, role):
     if len(res):
         return res[0][0]
     return False
+
 
 # serverId: Discord server id number
 def serverRegistered(serverId):
@@ -284,9 +390,60 @@ def isInAlliance(serverId, newAllianceId):
     return False
 
 
+# reaction: A discord reaction object
+def checkForSTFCEmoji(reaction):
+    try:
+        if reaction.emoji.name== 'crystal' or reaction.emoji.name == 'ore' or reaction.emoji.name == 'gas' or reaction.emoji.name == 'dilithium':
+            return True
+        if reaction.emoji.name == 'federation' or reaction.emoji.name == 'romulan' or reaction.emoji.name == 'klingon' or reaction.emoji.name == 'neutral':
+            return True
+        if reaction.emoji.name[0] == '1' or reaction.emoji.name[0] == '2' or reaction.emoji.name[0] == '3' or reaction.emoji.name[0] == '4':
+            return True
+    except:
+        return False 
+
+
+
 ###################################################################
 ### HELPER FUNCTIONS ##############################################
 ###################################################################
+
+
+
+# emojis: A list of discord Emoji objects
+#   vals: list of Strings representing resource search params
+def prepareResourceResults(emojis, vals):
+    resource      = vals[4]
+    tier          = vals[5]
+    region        = vals[3]
+    regionName    = vals[3]
+    emojiResource = getEmoji(emojis, vals[4])
+    emojiTier     = getEmoji(emojis, '{}star'.format(vals[5]))
+    emojiRegion   = getEmoji(emojis, vals[3])
+
+    if emojiResource:
+        resource = emojiResource
+    if emojiRegion:
+        region = emojiRegion
+    if emojiTier:
+        tier = emojiTier
+
+    # to keep things nice and tidy, format system name to be MIN 14 characters long
+    systemName = '`{}({})'.format(vals[1], vals[2])
+    for i in range(len(vals[1]), 14):
+        systemName += '.'
+    systemName += '`'
+    return '{} {} {} {}{}\n'.format(str(resource), str(tier), systemName, region, regionName)
+
+
+#        args: a list of string search parameters
+# searchParam: The param to remove from args
+def removeSearchParam(args, searchParam):
+    list = []
+    for arg in args:
+        if arg != searchParam:
+            list.append(arg)
+    return list
 
 
 # arr: an array of tuples (2d)
@@ -305,7 +462,6 @@ def deselectRole(selectedRoles, role):
     for r in selectedRoles:
         if r['role'].id == role.id:
             r['selected'] = False
-
 
 
 #         roles: List of discord role objects
@@ -340,7 +496,6 @@ def getSelectedRoles(roles, reaction, roleSelection):
         desc += '\n**When you have selected all your roles, please select the :arrow_right: symbol to continue...**'
     
     return roleSelection, desc
-
 
 
 #           title: string
@@ -417,6 +572,8 @@ def getSetupSummary(title, serverId, alliance, allianceId, manual, private, cate
 ### DATABASE ACTIONS FUNCTIONS ####################################
 ###################################################################
 
+
+
 #   serverId: discord server id, integer
 # allianceId: an alliance acronym, 4 letter string
 def determineFirstTimeSetup(serverId, allianceId):
@@ -433,8 +590,5 @@ def determineFirstTimeSetup(serverId, allianceId):
 
 # completely wipe the database,a nd recreate tables
 def databaseReset():
-    db.resetDatabase()
-    db.createDatabase()
-    
-
-
+    db.resetAllianceDatabase()
+    db.createAllianceTables()

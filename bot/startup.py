@@ -4,7 +4,7 @@ import sys, traceback, platform
 sys.path.append('./utils')
 
 # COGS
-initial_extensions = ['cogs.registration', 'cogs.setup', 'cogs.administration', 'cogs.help']
+initial_extensions = ['cogs.registration', 'cogs.setup', 'cogs.administration', 'cogs.help', 'cogs.resources']
 
 # Load configs
 configFile = open('config')
