@@ -4,9 +4,17 @@ import sys, asyncio
 from concurrent.futures import FIRST_COMPLETED
 from contextlib import suppress
 sys.path.append('../utils')
-import functions as f
+from bot.utils.functions import (
+    getResourceReliability,
+    getSearchQuerys,
+    getResourceResults,
+    prepareResourceResults,
+    getEmoji,
+    checkForSTFCEmoji,
+    removeSearchParam
+)
 import math as m
-import data_database as db
+from bot.utils.data_database import saveResource
 
 
 class ResourcesCog:
@@ -145,8 +153,8 @@ class ResourcesCog:
             if ans.content.lower() == 'confirm':
                 msg = '**Committing resource... ...**\n.'
                 await user.send(msg)
-                db.saveResource(system, lvl, region, resource, tier)
-                reliabilityScore = f.getResourceReliability(resource, tier, system)
+                saveResource(system, lvl, region, resource, tier)
+                reliabilityScore = getResourceReliability(resource, tier, system)
                 if reliabilityScore > 1:
                     msg = '**Resource **[SAVED].\n[RESOURCE] **exists, and is confirmed... ...** This resource will appear '
                     msg += 'with **.resource** command results. Thank you for this information... ... **goodbye**\n[CLOSED]\n'
@@ -189,10 +197,10 @@ class ResourcesCog:
 
 
         # loop through search parameters, and set resource, region, and tier variable
-        footer, resource, region, tier = f.getSearchQuerys(args, footer, resource, region, tier)
+        footer, resource, region, tier = getSearchQuerys(args, footer, resource, region, tier)
 
         # THE MAIN GAME! send in the search paramaters and query the database for a list of results!
-        results = f.getResourceResults(resource.title(), tier, region.title())
+        results = getResourceResults(resource.title(), tier, region.title())
 
         # now that you have results, determine the actual number of pages we need to show (MAX PER PAGE = pageMax)
         pages = m.ceil(len(results) / pageMax)
@@ -209,7 +217,7 @@ class ResourcesCog:
             # them if they exist on this server
             resourceList = ''
             for i in range(idx, pageEnd):
-                resourceList += f.prepareResourceResults(ctx.guild.emojis, results[i])
+                resourceList += prepareResourceResults(ctx.guild.emojis, results[i])
 
 
             # prepare the embed
@@ -227,11 +235,11 @@ class ResourcesCog:
             if page * pageMax < len(results):
                 await msg.add_reaction(emoji=self.next)
             if resource:
-                await msg.add_reaction(emoji=f.getEmoji(ctx.guild.emojis, resource))
+                await msg.add_reaction(emoji=getEmoji(ctx.guild.emojis, resource))
             if tier:
-                await msg.add_reaction(emoji=f.getEmoji(ctx.guild.emojis, '{}star'.format(tier)))
+                await msg.add_reaction(emoji=getEmoji(ctx.guild.emojis, '{}star'.format(tier)))
             if region:
-                await msg.add_reaction(emoji=f.getEmoji(ctx.guild.emojis, region))
+                await msg.add_reaction(emoji=getEmoji(ctx.guild.emojis, region))
 
             task_1 = asyncio.ensure_future(self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser))
             task_2 = asyncio.ensure_future(self.bot.wait_for('reaction_remove', timeout=60.0, check=checkUser))
@@ -252,23 +260,23 @@ class ResourcesCog:
             args = list(args)
             paramaterRemoved = False
 
-            if f.checkForSTFCEmoji(reaction) and (region.lower() == reaction.emoji.name.lower()):
+            if checkForSTFCEmoji(reaction) and (region.lower() == reaction.emoji.name.lower()):
                 paramaterRemoved = True
-                args = f.removeSearchParam(args, region) 
-            if f.checkForSTFCEmoji(reaction) and (resource.lower() == reaction.emoji.name.lower()):
+                args = removeSearchParam(args, region) 
+            if checkForSTFCEmoji(reaction) and (resource.lower() == reaction.emoji.name.lower()):
                 paramaterRemoved = True
-                args = f.removeSearchParam(args, resource) 
-            if f.checkForSTFCEmoji(reaction) and (tier.lower() == reaction.emoji.name[0]):
+                args = removeSearchParam(args, resource) 
+            if checkForSTFCEmoji(reaction) and (tier.lower() == reaction.emoji.name[0]):
                 paramaterRemoved = True
                 print(args, tier)
-                args = f.removeSearchParam(args, '{}star'.format(tier)) 
+                args = removeSearchParam(args, '{}star'.format(tier)) 
 
             if paramaterRemoved:
                 # loop through search parameters, and set resource, region, and tier variable
-                footer, resource, region, tier = f.getSearchQuerys(args, footer, resource, region, tier)
+                footer, resource, region, tier = getSearchQuerys(args, footer, resource, region, tier)
                 
                 # THE MAIN GAME! send in the search paramaters and query the database for a list of results!
-                results = f.getResourceResults(resource.title(), tier, region.title())
+                results = getResourceResults(resource.title(), tier, region.title())
 
                 # now that you have results, determine the actual number of pages we need to show (MAX PER PAGE = pageMax)
                 pages = m.ceil(len(results) / pageMax)
@@ -293,16 +301,16 @@ class ResourcesCog:
             else:
 
 
-                if f.checkForSTFCEmoji(reaction):
-                    newSearchParam = f.getEmoji(ctx.guild.emojis, reaction.emoji.name)
+                if checkForSTFCEmoji(reaction):
+                    newSearchParam = getEmoji(ctx.guild.emojis, reaction.emoji.name)
                     args = list(args)
                     args.append(newSearchParam.name) 
 
                     # loop through search parameters, and set resource, region, and tier variable
-                    footer, resource, region, tier = f.getSearchQuerys(args, footer, resource, region, tier)
+                    footer, resource, region, tier = getSearchQuerys(args, footer, resource, region, tier)
 
                     # THE MAIN GAME! send in the search paramaters and query the database for a list of results!
-                    results = f.getResourceResults(resource.title(), tier, region.title())
+                    results = getResourceResults(resource.title(), tier, region.title())
 
                     # now that you have results, determine the actual number of pages we need to show (MAX PER PAGE = pageMax)
                     pages = m.ceil(len(results) / pageMax)

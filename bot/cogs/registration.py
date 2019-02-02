@@ -2,7 +2,27 @@ import discord
 from discord.ext import commands
 import sys, asyncio
 sys.path.append('../utils')
-import functions as f
+from bot.utils.functions import (
+    hasRegisterCommandPermission,
+    serverRegistered,
+    isInAlliance,
+    getAllianceIdFromNick,
+    getAllianceName,
+    getMemberRoles,
+    getAllyRoles,
+    getAmbassadorRoles,
+    getMember,
+    getRole,
+    isUser,
+    getAllianceIds,
+    manualRegisterAllowed,
+    createChannelAllowed,
+    channelExists,
+    getAmbassadorCategory,
+    getCategory,
+    getChannel,
+    canAccessPrivateChannel
+)
 
 
 
@@ -30,7 +50,7 @@ class RegistrationCog:
         if member == None:
             # if the current user has roles for admin register command, they cannot use
             # command without parameter
-            if f.hasRegisterCommandPermission(ctx.guild.id, f.getAllianceIdFromNick(ctx.message.author.nick), ctx.message.author.roles):
+            if hasRegisterCommandPermission(ctx.guild.id, getAllianceIdFromNick(ctx.message.author.nick), ctx.message.author.roles):
                 err =  '{}, **No parameters wih command register.**\n'.format(ctx.message.author.mention)
                 err += 'The register command without parameters can only be used by new members. To register '
                 err += 'another user, please include the members name, whether they are a member, ally, or ambassador, '
@@ -40,7 +60,7 @@ class RegistrationCog:
 
 
         # if server is not in db, command cannot be run
-        if not f.serverRegistered(ctx.guild.id):
+        if not serverRegistered(ctx.guild.id):
             err =  '{}, **You have not registered your server with me yet.**\n'.format(ctx.message.author.mention)
             err += 'To use this command, a server admin must perform the bot setup. Use the command:'
             err += '```.setup <alliance abbreviation``` to setup your server with me.'
@@ -64,7 +84,7 @@ class RegistrationCog:
         if member != None and type != None and newUserAlliance != None:
 
             # type is member, but provided alliance id is not on server settings as member allianc.
-            if type.lower() == 'member' and not f.isInAlliance(ctx.guild.id, newUserAlliance):
+            if type.lower() == 'member' and not isInAlliance(ctx.guild.id, newUserAlliance):
                 err =  '{}, **Incorrect command:** *type and user alliance*.\n'.format(ctx.message.author.mention)
                 err += '{} is not registered as a member alliance for this server. If this alliance '.format(newUserAlliance.upper())
                 err += 'should be considered a member alliance, please set it up as so with the command'
@@ -73,7 +93,7 @@ class RegistrationCog:
                 return
 
             # type is ambassador or ally, but provided alliance id is on server settings as member alliance.
-            if (type.lower() == 'ambassador' or type.lower() == 'ally') and f.isInAlliance(ctx.guild.id, newUserAlliance):
+            if (type.lower() == 'ambassador' or type.lower() == 'ally') and isInAlliance(ctx.guild.id, newUserAlliance):
                 err =  '{}, **Incorrect command:** *type and user alliance*.\n'.format(ctx.message.author.mention)
                 err += '{} is registered as a member alliance for this server, and therefore '.format(newUserAlliance.upper())
                 err += 'cannot be used with the "ambassador" or "ally" argument.'
@@ -87,13 +107,13 @@ class RegistrationCog:
         userRoles          = ctx.message.author.roles           # roles of the user: default to message sender
         author             = ctx.message.author                 # the user: default to message sender
         newUser            = None
-        allianceId         = f.getAllianceIdFromNick(author.nick)
-        allianceName       = f.getAllianceName(ctx.guild.id)
+        allianceId         = getAllianceIdFromNick(author.nick)
+        allianceName       = getAllianceName(ctx.guild.id)
         server             = ctx.guild                          # server the command was used on
-        memberRoles        = f.getMemberRoles(server.id, allianceId)
-        ambassadorRoles    = f.getAmbassadorRoles(server.id, allianceId)
-        allyRoles          = f.getAllyRoles(server.id, allianceId)
-        ambassadorCategory = f.getAmbassadorCategory(server.id)
+        memberRoles        = getMemberRoles(server.id, allianceId)
+        ambassadorRoles    = getAmbassadorRoles(server.id, allianceId)
+        allyRoles          = getAllyRoles(server.id, allianceId)
+        ambassadorCategory = getAmbassadorCategory(server.id)
         channel            = ''                                 # placeholder for new channel name
 
         # permissions for users/roles that can use new channel
@@ -122,13 +142,13 @@ class RegistrationCog:
 
         # CASE 1
         # Command is being used by an administrator. 
-        if ctx.message.author.guild_permissions.administrator or f.hasRegisterCommandPermission(server.id, allianceId, userRoles):
+        if ctx.message.author.guild_permissions.administrator or hasRegisterCommandPermission(server.id, allianceId, userRoles):
 
             # if admin is user command for other user, a user must be provided
             if len(ctx.message.mentions) > 0:
                 newUser = ctx.message.mentions[0]
-            elif f.isUser(member, ctx.guild.members):
-                newUser = f.getMember(member, ctx.guild.members)
+            elif isUser(member, ctx.guild.members):
+                newUser = getMember(member, ctx.guild.members)
             else:
                 err =  '{}, Member {}. not found. Please  check the name and try again, '.format(ctx.message.author.mention, member)
                 err += 'or mention the user instead.'
@@ -146,15 +166,15 @@ class RegistrationCog:
 
             if type.lower() == 'member':
                 for role in memberRoles:
-                    await newUser.add_roles(f.getRole(roles, role))
+                    await newUser.add_roles(getRole(roles, role))
 
             if type.lower() == 'ambassador':
                 for role in ambassadorRoles:
-                    await newUser.add_roles(f.getRole(roles, role))  
+                    await newUser.add_roles(getRole(roles, role))  
 
             if type.lower() == 'ally':
                 for role in allyRoles:
-                    await newUser.add_roles(f.getRole(roles, role))           
+                    await newUser.add_roles(getRole(roles, role))           
 
         # CASE 2
         # command is being used by a non administrator. User is
@@ -169,7 +189,7 @@ class RegistrationCog:
                 await ctx.send(err)
                 return
 
-            if not f.manualRegisterAllowed(server.id):
+            if not manualRegisterAllowed(server.id):
                 err =  '{}, This server does not allow self registration. Please check with admin.'.format(ctx.message.author.mention)
                 await ctx.send(err)
                 return
@@ -189,7 +209,7 @@ class RegistrationCog:
                 if ans.content.lower() == 'member':
 
                     # if more than one alliance is saved to database,  need to determine which this new member belongs to
-                    ids = f.getAllianceIds(server.id)
+                    ids = getAllianceIds(server.id)
                     if len(ids) > 1:
                         msg = 'Welcome {} Member. Which member alliance are you a part of? Please choose from '.format(allianceName)
                         msg += 'the list below:\n'
@@ -203,10 +223,10 @@ class RegistrationCog:
                             id = id.content
 
                             # set the roles, set the nickname, and finish
-                            if f.isInAlliance(server.id, id.upper()):
-                                memberRoles = f.getMemberRoles(server.id, id)
+                            if isInAlliance(server.id, id.upper()):
+                                memberRoles = getMemberRoles(server.id, id)
                                 for role in memberRoles:
-                                    await newUser.add_roles(f.getRole(roles, role)) 
+                                    await newUser.add_roles(getRole(roles, role)) 
                                 await newUser.edit(nick='[{}] {}'.format(id.upper(), newUser.name))
                                 msg = 'Thank you, **I have set your role and your nickname for this server.** You are now all set!'
                                 await ctx.message.author.send(msg)
@@ -223,7 +243,7 @@ class RegistrationCog:
                     else:
                         # set user role based on DB alliance member role, and set nickname to include alliance abreviation
                         for role in memberRoles:
-                            await newUser.add_roles(f.getRole(roles, role)) 
+                            await newUser.add_roles(getRole(roles, role)) 
                         await newUser.edit(nick='[{}] {}'.format(allianceId, newUser.name))
                         msg = 'Thank you, **I have set your role and your nickname for this server.** You are now all set!'
                         await ctx.message.author.send(msg)
@@ -233,17 +253,17 @@ class RegistrationCog:
                 elif ans.content.lower() == 'ambassador' or  ans.content.lower() == 'ally':
 
                     # get values for alliance Id, ambassador and ally roles
-                    allianceId = f.getAllianceIds(server.id)[0]
-                    ambassadorRoles = f.getAmbassadorRoles(server.id, allianceId)
-                    allyRoles       = f.getAllyRoles(server.id, allianceId) 
+                    allianceId = getAllianceIds(server.id)[0]
+                    ambassadorRoles = getAmbassadorRoles(server.id, allianceId)
+                    allyRoles       = getAllyRoles(server.id, allianceId) 
 
                     # set user role based on DB ambassador role
                     if ans.content.lower() == 'ambassador':
                         for role in ambassadorRoles:
-                            await newUser.add_roles(f.getRole(roles, role))  
+                            await newUser.add_roles(getRole(roles, role))  
                     if ans.content.lower() == 'ally':
                         for role in allyRoles:
-                            await newUser.add_roles(f.getRole(roles, role))  
+                            await newUser.add_roles(getRole(roles, role))  
 
                     msg = '**Thank you, I have set your role.**\n'
                     msg += 'The last thing I need to know is your Alliance abbreviation. Please respond with only your Alliance abbreviation.\n'
@@ -278,20 +298,20 @@ class RegistrationCog:
         ### STEP TWO ###
         ### Create private channel for ambassadors
 
-        if not f.createChannelAllowed(server.id):
+        if not createChannelAllowed(server.id):
             return
 
 
         # If user is not an alliance member -> aka an ambassador, we need tp
         # create a new channel for ambassadors and chosen server roles only
-        if not f.isInAlliance(server.id, newUserAlliance):
+        if not isInAlliance(server.id, newUserAlliance):
             
             # new channel name should be a combination of both alliances abbreviations
             channelName = '{}-{}'.format(allianceId.lower(), newUserAlliance.lower())
 
             # check if channel exists. If so, just give user access to that channel
-            if f.channelExists(server.channels, channelName):
-                channel = f.getChannel(server.channels, channelName)
+            if channelExists(server.channels, channelName):
+                channel = getChannel(server.channels, channelName)
                 await channel.set_permissions(newUser, overwrite=show)
 
             # if channel does not exist, create it and make it private except for the bot
@@ -301,12 +321,12 @@ class RegistrationCog:
                     server.me: show
                 }
                 channel = await server.create_text_channel(channelName, overwrites=overwrites)
-                await channel.edit(category=f.getCategory(ctx.guild.channels, ambassadorCategory))
+                await channel.edit(category=getCategory(ctx.guild.channels, ambassadorCategory))
 
             # loop through all server roles. If role according to settings should be allowed to
             # enter channel, give them permissions to do so.
             for role in roles:
-                if f.canAccessPrivateChannel(server.id, allianceId, role):
+                if canAccessPrivateChannel(server.id, allianceId, role):
                     await channel.set_permissions(role, overwrite=show)
 
             # finally, give the new user permission to see channel

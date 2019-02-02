@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import sys, asyncio
 sys.path.append('../utils')
-import functions as f
+from bot.utils.functions import databaseReset, getSettings, getSetupSummary, isInAlliance
 
 
 configFile = open('config')
@@ -28,7 +28,7 @@ class AdministrationCog:
         if (ctx.message.author.id != int(config['OWNER']['id'])):
             return
 
-        f.databaseReset()
+        databaseReset()
         await ctx.send('{}, database reset'.format(ctx.message.author.mention))
 
 
@@ -51,17 +51,17 @@ class AdministrationCog:
             await ctx.send(err)
             return
 
-        if not f.isInAlliance(ctx.guild.id, allianceId):
+        if not isInAlliance(ctx.guild.id, allianceId):
             err =  '{}, that allianceId is not registered for your server'.format(ctx.message.author.mention)
             await ctx.send(err)
             return
 
         title = 'DATA Bot Settings'
         footerText = '*DATA Bot Setup: url-to-code, bot-help-server*'
-        settings = f.getSettings(ctx.guild.id, allianceId.upper(), ctx.guild.roles, ctx.guild.categories) 
+        settings = getSettings(ctx.guild.id, allianceId.upper(), ctx.guild.roles, ctx.guild.categories) 
         summary = '[DECRYPTING] sensitive data... ...\n\n'
         
-        summary += f.getSetupSummary(
+        summary += getSetupSummary(
             '{} Settings'.format(ctx.guild.name),
             ctx.guild.id,
             ctx.guild.name,

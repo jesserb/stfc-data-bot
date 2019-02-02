@@ -1,6 +1,6 @@
 import sys
-import data_database as db
-from constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
+from bot.utils.data_database import queryDatabase, resetAllianceDatabase, createAllianceTables
+from bot.utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
 
 
 
@@ -35,7 +35,7 @@ def getResourceReliability(resource, tier, system):
     if tier:
         addition = ' AND AND Tier={}'.format(tier)
 
-    res = db.queryDatabase(sql + addition)
+    res = queryDatabase(sql + addition)
     return res[0][0]
 
 
@@ -66,7 +66,7 @@ def getResourceResults(resource, tier, region):
     if numFilters > 0:
         sql = sql + whereClause
     
-    return db.queryDatabase(sql+filter+' ORDER BY Resource == "Dilithium", Resource, Tier DESC, Region')
+    return queryDatabase(sql+filter+' ORDER BY Resource == "Dilithium", Resource, Tier DESC, Region')
 
 
 #     args: A list of arguments, representing a resources search query
@@ -126,7 +126,7 @@ def getSettings(serverId, allianceId, roles, categories):
         WHERE S.ServerID={}
     '''.format(allianceId, serverId)
 
-    resp = db.queryDatabase(sql)
+    resp = queryDatabase(sql)
     memberRoles = []
     ambassadorRoles = []
     allyRoles = []
@@ -194,7 +194,7 @@ def getAllianceIds(serverId):
         FROM Alliance AS A
         WHERE A.ServerID={}
     '''.format(serverId)
-    res = db.queryDatabase(sql)
+    res = queryDatabase(sql)
     return reduceResults(res)
 
 
@@ -205,7 +205,7 @@ def getAllianceName(serverId):
         FROM Server AS S
         WHERE S.ServerID={}
     '''.format(serverId)
-    res = db.queryDatabase(sql)
+    res = queryDatabase(sql)
     return res[0][0]
 
 
@@ -218,7 +218,7 @@ def getMemberRoles(serverId, allianceId):
         AND R.AllianceID='{}'
         AND R.MemberRole=1
     '''.format(serverId, allianceId.upper())
-    return reduceResults(db.queryDatabase(sql))
+    return reduceResults(queryDatabase(sql))
 
 
 # serverId: id for current server, from discord guild object
@@ -230,7 +230,7 @@ def getAmbassadorRoles(serverId, allianceId):
         AND R.AllianceID='{}'
         AND R.AmbassadorRole=1
     '''.format(serverId, allianceId.upper())
-    return reduceResults(db.queryDatabase(sql))
+    return reduceResults(queryDatabase(sql))
 
 
 # serverId: id for current server, from discord guild object
@@ -242,7 +242,7 @@ def getAllyRoles(serverId, allianceId):
         AND R.AllianceID='{}'
         AND R.AllyRole=1
     '''.format(serverId, allianceId.upper())
-    return reduceResults(db.queryDatabase(sql))
+    return reduceResults(queryDatabase(sql))
 
 
 # serverId: id for current server, from discord guild object
@@ -252,7 +252,7 @@ def getAmbassadorCategory(serverId):
         FROM Server AS S
         WHERE S.ServerID={}
     '''.format(serverId)
-    res = db.queryDatabase(sql)
+    res = queryDatabase(sql)
     return res[0][0]
 
 
@@ -309,7 +309,7 @@ def manualRegisterAllowed(serverId):
         WHERE S.ServerID={}
     '''.format(serverId)
     
-    res = db.queryDatabase(sql)
+    res = queryDatabase(sql)
     return res[0]
 
 
@@ -321,7 +321,7 @@ def createChannelAllowed(serverId):
         WHERE S.ServerID={}
     '''.format(serverId)
     
-    res = db.queryDatabase(sql)
+    res = queryDatabase(sql)
     if len(res):
         return res[0][0]
     return False
@@ -339,7 +339,7 @@ def hasRegisterCommandPermission(serverId, allianceId, roles):
             AND R.Role='{}'
         '''.format(serverId, allianceId, role.name.lower())
 
-        res = db.queryDatabase(sql)
+        res = queryDatabase(sql)
         if len(res) and res[0][0]:
             return True
     return False
@@ -356,7 +356,7 @@ def canAccessPrivateChannel(serverId, allianceId, role):
         AND R.Role='{}'
     '''.format(serverId, allianceId, role.name.lower())
     
-    res = db.queryDatabase(sql)
+    res = queryDatabase(sql)
     if len(res):
         return res[0][0]
     return False
@@ -370,7 +370,7 @@ def serverRegistered(serverId):
         WHERE A.ServerID={}
     '''.format(serverId)
 
-    res = db.queryDatabase(sql)
+    res = queryDatabase(sql)
     return len(res)
 
 
@@ -382,7 +382,7 @@ def isInAlliance(serverId, newAllianceId):
         FROM Alliance AS A
         WHERE A.ServerID={}
     '''.format(serverId)
-    res = db.queryDatabase(sql)
+    res = queryDatabase(sql)
 
     for id in res:
         if id[0].lower() == newAllianceId.lower():
@@ -513,7 +513,7 @@ def getSelectedRoles(roles, reaction, roleSelection):
 def getSetupSummary(title, serverId, alliance, allianceId, manual, private, category,
                     memberRoles, ambassadorRoles, allyRoles, registerRoles, pvtRoles):
 
-        res = db.queryDatabase('SELECT AllianceID FROM Alliance WHERE ServerID={}'.format(serverId))
+        res = queryDatabase('SELECT AllianceID FROM Alliance WHERE ServerID={}'.format(serverId))
 
         summary = '**{}**\n\nBelow is your server settings.\n\n'.format(title)
         summary += '**ALLIANCE:** {}\n'.format(alliance)
@@ -578,9 +578,9 @@ def getSetupSummary(title, serverId, alliance, allianceId, manual, private, cate
 # allianceId: an alliance acronym, 4 letter string
 def determineFirstTimeSetup(serverId, allianceId):
     sql = 'SELECT AllianceID FROM Alliance WHERE ServerID={}'.format(serverId)
-    alliancesExist = db.queryDatabase(sql)
+    alliancesExist = queryDatabase(sql)
     sql = 'SELECT AllianceID FROM Alliance WHERE ServerID={} AND AllianceID="{}"'.format(serverId, allianceId)
-    thisAllianceExists = db.queryDatabase(sql)
+    thisAllianceExists = queryDatabase(sql)
 
     # Not first time set up if server is registered and this alliance id is not
     if len(alliancesExist) and not len(thisAllianceExists):
@@ -590,5 +590,5 @@ def determineFirstTimeSetup(serverId, allianceId):
 
 # completely wipe the database,a nd recreate tables
 def databaseReset():
-    db.resetAllianceDatabase()
-    db.createAllianceTables()
+    resetAllianceDatabase()
+    createAllianceTables()

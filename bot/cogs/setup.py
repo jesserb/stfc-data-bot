@@ -1,11 +1,10 @@
 import discord
 from discord.ext import commands
 import sys, asyncio
-sys.path.append('../utils')
-import functions as f
-import test_functions as tf
-import data_database as db
-from constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS, GITHUB
+from bot.utils.functions import getSelectedRoles, determineFirstTimeSetup, getSettings, getSetupSummary
+from bot.utils.test_functions import setAllSetup
+from bot.utils.data_database import saveSettings
+from bot.utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS, GITHUB
 
 
 
@@ -74,7 +73,7 @@ class SetupCog:
         # BEFORE RUNNING SETUP, we check to see if this server has already
         # registered another alliance. If so, we will offer them the chance
         # to copy those settings and apply them to the new alliance
-        existingAllianceID = f.determineFirstTimeSetup(ctx.guild.id, allianceAcronym)
+        existingAllianceID = determineFirstTimeSetup(ctx.guild.id, allianceAcronym)
         if existingAllianceID != None:
             # post explanation to interface to explain how to use this screen
             explanation = 'Initiate setup mode...\n\n'
@@ -115,13 +114,13 @@ class SetupCog:
         if test:
             allowManualRegister = True
             allowPrivateChannelCreation = True
-            selectedCategory =  tf.setAllSetup(memberRoles, ambassadorRoles, allyRoles, registerCommandRoleSelection, privateChannelRoleSelection, ctx.guild.categories)
+            selectedCategory =  setAllSetup(memberRoles, ambassadorRoles, allyRoles, registerCommandRoleSelection, privateChannelRoleSelection, ctx.guild.categories)
 
         # If user opted to copy the settings from their other servers alliance settings,
         # simply ask them to confirm the settings, and save to database or cancel.
         if not newSetup:
-            settings = f.getSettings(ctx.guild.id, existingAllianceID.upper(), ctx.guild.roles, ctx.guild.categories)             
-            summary = f.getSetupSummary(
+            settings = getSettings(ctx.guild.id, existingAllianceID.upper(), ctx.guild.roles, ctx.guild.categories)             
+            summary = getSetupSummary(
                 'Summary of Setup',
                 ctx.guild.id,
                 ctx.guild.name,
@@ -149,7 +148,7 @@ class SetupCog:
                 
                 # if user reacts with 'NEXT', move to next interface
                 if reaction.emoji == '✅':
-                    db.saveSettings(
+                    saveSettings(
                         ctx.guild.id,
                         ctx.guild.name,
                         allianceAcronym.upper(),
@@ -253,7 +252,7 @@ class SetupCog:
 
                 # need to figure out which role the users reaction corresponds with
                 # this will either select or deselect a role depending on role selection state
-                memberRoles, desc = f.getSelectedRoles(roles, reaction, memberRoles)
+                memberRoles, desc = getSelectedRoles(roles, reaction, memberRoles)
 
                 # prepare embed interface for post
                 embed = discord.Embed(title=title, description=explanation+desc, color=1234123)
@@ -306,7 +305,7 @@ class SetupCog:
 
                 # need to figure out which role the users reaction corresponds with
                 # this will either select or deselect a role depending on role selection state
-                ambassadorRoles, desc = f.getSelectedRoles(roles, reaction, ambassadorRoles)
+                ambassadorRoles, desc = getSelectedRoles(roles, reaction, ambassadorRoles)
 
                 # prepare embed interface for post
                 embed = discord.Embed(title=title, description=explanation+desc, color=1234123)
@@ -369,7 +368,7 @@ class SetupCog:
 
                 # need to figure out which role the users reaction corresponds with
                 # this will either select or deselect a role depending on role selection state
-                allyRoles, desc = f.getSelectedRoles(roles, reaction, allyRoles)
+                allyRoles, desc = getSelectedRoles(roles, reaction, allyRoles)
 
                 # prepare embed interface for post
                 embed = discord.Embed(title=title, description=explanation+desc, color=1234123)
@@ -421,7 +420,7 @@ class SetupCog:
 
                 # need to figure out which role the users reaction corresponds with
                 # this will either select or deselect a role depending on role selection state
-                registerCommandRoleSelection, desc = f.getSelectedRoles(roles, reaction, registerCommandRoleSelection)
+                registerCommandRoleSelection, desc = getSelectedRoles(roles, reaction, registerCommandRoleSelection)
 
                 # prepare embed interface for post
                 embed = discord.Embed(title=title, description=explanation+desc, color=1234123)
@@ -547,7 +546,7 @@ class SetupCog:
 
                     # need to figure out which role the users reaction corresponds with
                     # this will either select or deselect a role depending on role selection state
-                    privateChannelRoleSelection, desc = f.getSelectedRoles(roles, reaction, privateChannelRoleSelection)
+                    privateChannelRoleSelection, desc = getSelectedRoles(roles, reaction, privateChannelRoleSelection)
                     
                     # prepare embed interface for post
                     embed = discord.Embed(title=title, description=explanation+desc, color=1234123)
@@ -614,7 +613,7 @@ class SetupCog:
         # STEP 9
         # Summarize user settings
 
-        summary = f.getSetupSummary('Summary of Setup', ctx.guild.id, ctx.guild.name, allianceAcronym, allowManualRegister, allowPrivateChannelCreation, selectedCategory,
+        summary = getSetupSummary('Summary of Setup', ctx.guild.id, ctx.guild.name, allianceAcronym, allowManualRegister, allowPrivateChannelCreation, selectedCategory,
                                    memberRoles, ambassadorRoles, allyRoles, registerCommandRoleSelection, privateChannelRoleSelection)
         summary += '\n**To accept these settings, select** {}\n**To cancel setup, select** {}\n'.format('✅', '❌')
         embed = discord.Embed(title=title, description=summary, color=1234123)
@@ -630,7 +629,7 @@ class SetupCog:
             
             # if user reacts with 'NEXT', move to next interface
             if reaction.emoji == '✅':
-                db.saveSettings(
+                saveSettings(
                     ctx.guild.id,
                     ctx.guild.name,
                     allianceAcronym,

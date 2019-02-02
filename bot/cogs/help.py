@@ -1,9 +1,8 @@
 import discord
 from discord.ext import commands
 import sys, asyncio
-sys.path.append('../utils')
-import functions as f
-from constants import GITHUB
+from bot.utils.functions import getAllianceIdFromNick, hasRegisterCommandPermission
+from bot.utils.constants import GITHUB
 
 
 
@@ -32,10 +31,10 @@ class HelpCog:
     @commands.command()
     async def help(self, ctx, *args):
         
-        allianceId = f.getAllianceIdFromNick(ctx.message.author.nick)
+        allianceId = getAllianceIdFromNick(ctx.message.author.nick)
         adminCommands = ''
 
-        if f.hasRegisterCommandPermission(ctx.guild.id, allianceId, ctx.message.author.roles):
+        if hasRegisterCommandPermission(ctx.guild.id, allianceId, ctx.message.author.roles):
 
             adminCommands = '__**Settings Command**: <alliance id>__\n'
             adminCommands += '*returns the settings for the specified alliance id*\n'
