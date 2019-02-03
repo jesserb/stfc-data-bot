@@ -1,6 +1,6 @@
 import sys
-from bot.utils.data_database import queryDatabase, resetAllianceDatabase, createAllianceTables
-from bot.utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
+from utils.data_database import queryDatabase, resetAllianceDatabase, createAllianceTables
+from utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
 
 
 
@@ -9,6 +9,179 @@ from bot.utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
 ###################################################################
 ### GET FUNCTIONS #################################################
 ###################################################################
+
+
+
+def getROEViolations(serverId, query):
+    sql = '''
+        SELECT AllianceID, Violations
+        FROM ROE
+        WHERE ServerId={}
+    '''.format(serverId)
+
+    if query:
+        sql += 'AND AllianceID="{}"'.format(query)
+    resp = queryDatabase(sql)
+
+    if not len(resp):
+        return '**No ROE Violations'
+
+    roeList = ''
+    for r in resp:
+        roeList += '`{}'.format(r[0])
+        for i in range(len(r[0]), 14):
+            roeList += '.'
+        roeList += '` `{} violations`\n'.format(r[1])
+    return roeList
+    
+
+
+
+
+
+def getAllies(serverId):
+    sql = '''
+        SELECT AllianceID
+        FROM AllianceIntelligence
+        WHERE ServerID={}
+        AND AoA=1
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        reduced = reduceResults(resp)
+        strResult = ''
+        for r in reduced:
+            strResult += '{}, '.format(r) 
+        return strResult
+    return ''
+
+def getKos(serverId):
+    sql = '''
+        SELECT AllianceID
+        FROM AllianceIntelligence
+        WHERE ServerID={}
+        AND KOS=1
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        reduced = reduceResults(resp)
+        strResult = ''
+        for r in reduced:
+            strResult += '{}, '.format(r) 
+        return strResult
+    return ''
+
+def getNaps(serverId):
+    sql = '''
+        SELECT AllianceID
+        FROM AllianceIntelligence
+        WHERE ServerID={}
+        AND NAP=1
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        reduced = reduceResults(resp)
+        strResult = ''
+        for r in reduced:
+            strResult += '{}, '.format(r) 
+        return strResult
+    return ''
+
+
+def getWar(serverId):
+    sql = '''
+        SELECT AllianceID
+        FROM AllianceIntelligence
+        WHERE ServerID={}
+        AND War=1
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        reduced = reduceResults(resp)
+        strResult = ''
+        for r in reduced:
+            strResult += '{}, '.format(r) 
+        return strResult
+    return ''
+
+def getRoeRules(serverId, allianceId):
+    sql = '''
+        Select RoeRules
+        FROM GeneralAllianceInfo
+        WHERE ServerID={}
+        AND AllianceID="{}"
+    '''.format(serverId, allianceId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        return resp[0][0]
+    return ''
+
+def getAlliesInfo(serverId, allianceId):
+    sql = '''
+        Select AlliesInfo
+        FROM GeneralAllianceInfo
+        WHERE ServerID={}
+        AND AllianceID="{}"
+    '''.format(serverId, allianceId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        return resp[0][0]
+    return ''
+
+
+def getNapInfo(serverId, allianceId):
+    sql = '''
+        Select NAPInfo
+        FROM GeneralAllianceInfo
+        WHERE ServerID={}
+        AND AllianceID="{}"
+    '''.format(serverId, allianceId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        return resp[0][0]
+    return ''
+
+
+def getKosInfo(serverId, allianceId):
+    sql = '''
+        Select KosInfo
+        FROM GeneralAllianceInfo
+        WHERE ServerID={}
+        AND AllianceID="{}"
+    '''.format(serverId, allianceId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        return resp[0][0]
+    return ''
+
+
+def getWarInfo(serverId, allianceId):
+    sql = '''
+        Select WarInfo
+        FROM GeneralAllianceInfo
+        WHERE ServerID={}
+        AND AllianceID="{}"
+    '''.format(serverId, allianceId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        return resp[0][0]
+    return ''
+
+
+
+def getHomeInfo(serverId, allianceId):
+    sql = '''
+        Select HomeInfo
+        FROM GeneralAllianceInfo
+        WHERE ServerID={}
+        AND AllianceID="{}"
+    '''.format(serverId, allianceId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        return resp[0][0]
+    return ''
+
+
 
 
 
@@ -120,9 +293,9 @@ def getMember(member, members):
 # categories: list of discord category objects
 def getSettings(serverId, allianceId, roles, categories):
     sql = '''
-        SELECT S.AllianceName, S.CreateChannel, S.ChannelCategory, R.Role, R.MemberRole, R.AmbassadorRole, R.AllyRole, R.AdminRegister, R.AccessAmbassadorChannels
+        SELECT S.AllianceName, S.CreateChannel, S.ChannelCategory, R.Role, R.MemberRole, R.AmbassadorRole, R.AllyRole, R.AdminRole, R.AccessAmbassadorChannels
         FROM Server AS S
-        JOIN RegisterCommandSettings As R ON S.ServerID=R.ServerID AND R.AllianceID='{}'
+        JOIN AllianceRolePermissions As R ON S.ServerID=R.ServerID AND R.AllianceID='{}'
         WHERE S.ServerID={}
     '''.format(allianceId, serverId)
 
@@ -213,7 +386,7 @@ def getAllianceName(serverId):
 def getMemberRoles(serverId, allianceId):
     sql = '''
         SELECT R.Role
-        FROM RegisterCommandSettings AS R
+        FROM AllianceRolePermissions AS R
         WHERE R.ServerID={}
         AND R.AllianceID='{}'
         AND R.MemberRole=1
@@ -225,7 +398,7 @@ def getMemberRoles(serverId, allianceId):
 def getAmbassadorRoles(serverId, allianceId):
     sql = '''
         SELECT R.Role
-        FROM RegisterCommandSettings AS R
+        FROM AllianceRolePermissions AS R
         WHERE R.ServerID={}
         AND R.AllianceID='{}'
         AND R.AmbassadorRole=1
@@ -237,7 +410,7 @@ def getAmbassadorRoles(serverId, allianceId):
 def getAllyRoles(serverId, allianceId):
     sql = '''
         SELECT R.Role
-        FROM RegisterCommandSettings AS R
+        FROM AllianceRolePermissions AS R
         WHERE R.ServerID={}
         AND R.AllianceID='{}'
         AND R.AllyRole=1
@@ -327,13 +500,59 @@ def createChannelAllowed(serverId):
     return False
 
 
+def hasIntel(serverId):
+    sql = '''
+        SELECT *
+        FROM AllianceIntelligence
+        WHERE ServerID={}
+    '''.format(serverId) 
+    res = queryDatabase(sql)
+    return len(res)
+
+def hasGeneralInfo(serverId):
+    sql = '''
+        SELECT *
+        FROM GeneralAllianceInfo
+        WHERE ServerID={}
+    '''.format(serverId) 
+    res = queryDatabase(sql)
+    return len(res)
+
+
+def isAllianceMember(serverId, userRoles):
+    for role in userRoles:
+        sql = '''
+            SELECT R.AdminRole
+            FROM AllianceRolePermissions AS R
+            WHERE R.ServerID={}
+            AND R.Role='{}'
+        '''.format(serverId, role.name.lower())
+        res = queryDatabase(sql)
+
+        if len(res) and res[0][0]:
+            return True
+
+        sql = '''
+            SELECT R.MemberRole
+            FROM AllianceRolePermissions AS R
+            WHERE R.ServerID={}
+            AND R.Role='{}'
+        '''.format(serverId, role.name.lower())
+        res = queryDatabase(sql)
+
+        if len(res) and res[0][0]:
+            return True
+    return False
+
+
+
 # serverId: id for current server, from discord guild object
 #    roles: list of discord role objects
-def hasRegisterCommandPermission(serverId, allianceId, roles):
+def hasAdminPermission(serverId, allianceId, roles):
     for role in roles:
         sql = '''
-            SELECT R.AdminRegister
-            FROM RegisterCommandSettings AS R
+            SELECT R.AdminRole
+            FROM AllianceRolePermissions AS R
             WHERE R.ServerID={}
             AND R.AllianceID='{}'
             AND R.Role='{}'
@@ -350,7 +569,7 @@ def hasRegisterCommandPermission(serverId, allianceId, roles):
 def canAccessPrivateChannel(serverId, allianceId, role):
     sql = '''
         SELECT R.AccessAmbassadorChannels
-        FROM RegisterCommandSettings AS R
+        FROM AllianceRolePermissions AS R
         WHERE R.ServerID={}
         AND R.AllianceID='{}'
         AND R.Role='{}'
@@ -390,6 +609,36 @@ def isInAlliance(serverId, newAllianceId):
     return False
 
 
+def hasSTFCEmojis(emojis):
+    numEmojisFound = 0
+    for e in emojis:
+        if e.name.lower() == 'crystal':
+            numEmojisFound += 1
+        if e.name.lower() == 'gas':
+            numEmojisFound += 1
+        if e.name.lower() == 'dilithium':
+            numEmojisFound += 1
+        if e.name.lower() == 'ore':
+            numEmojisFound += 1
+        if e.name.lower() == 'federation':
+            numEmojisFound += 1
+        if e.name.lower() == 'neutral':
+            numEmojisFound += 1
+        if e.name.lower() == 'klingon':
+            numEmojisFound += 1
+        if e.name.lower() == 'romulan':
+            numEmojisFound += 1
+        if e.name[0] == '0':
+            numEmojisFound += 1
+        if e.name[0] == '2':
+            numEmojisFound += 1
+        if e.name[0] == '3':
+            numEmojisFound += 1
+        if e.name[0] == '4':
+            numEmojisFound += 1
+    return numEmojisFound == 12
+
+
 # reaction: A discord reaction object
 def checkForSTFCEmoji(reaction):
     try:
@@ -413,19 +662,22 @@ def checkForSTFCEmoji(reaction):
 # emojis: A list of discord Emoji objects
 #   vals: list of Strings representing resource search params
 def prepareResourceResults(emojis, vals):
-    resource      = vals[4]
-    tier          = vals[5]
-    region        = vals[3]
-    regionName    = vals[3]
-    emojiResource = getEmoji(emojis, vals[4])
-    emojiTier     = getEmoji(emojis, '{}star'.format(vals[5]))
-    emojiRegion   = getEmoji(emojis, vals[3])
+    resource      = '`{}{}`'.format(vals[4], '.' * (10 - len(vals[4])))
+    tier          = '`{}*`'.format(vals[5]) if vals[5] else '`..`'
+    region        = '`{}`'.format(vals[3])
+    hasEmojis     = hasSTFCEmojis(emojis)
+    regionName    =  '{}'.format(vals[3].title()) if hasEmojis else ''
+    if hasEmojis:
+        emojiResource = getEmoji(emojis, vals[4])
+        emojiTier     = getEmoji(emojis, '{}star'.format(vals[5]))
+        emojiRegion   = getEmoji(emojis, vals[3])
 
-    if emojiResource:
+
+    if hasEmojis and emojiResource:
         resource = emojiResource
-    if emojiRegion:
+    if hasEmojis and emojiRegion:
         region = emojiRegion
-    if emojiTier:
+    if hasEmojis and emojiTier:
         tier = emojiTier
 
     # to keep things nice and tidy, format system name to be MIN 14 characters long
@@ -554,7 +806,7 @@ def getSetupSummary(title, serverId, alliance, allianceId, manual, private, cate
             if r['selected']:
                 summary += '× {}\n'.format(r['role'].name)
 
-        summary += '\n***Roles that can set up other users:***\n'
+        summary += '\n***Admin Roles:***\n'
         for r in registerRoles:
             if r['selected']:
                 summary += '× {}\n'.format(r['role'].name)

@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands
 import sys, asyncio
-sys.path.append('../utils')
-from bot.utils.functions import databaseReset, getSettings, getSetupSummary, isInAlliance
+from utils.functions import databaseReset, getSettings, getSetupSummary, isInAlliance
 
 
 configFile = open('config')

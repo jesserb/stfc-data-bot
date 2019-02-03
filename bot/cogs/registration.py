@@ -1,9 +1,8 @@
 import discord
 from discord.ext import commands
 import sys, asyncio
-sys.path.append('../utils')
-from bot.utils.functions import (
-    hasRegisterCommandPermission,
+from utils.functions import (
+    hasAdminPermission,
     serverRegistered,
     isInAlliance,
     getAllianceIdFromNick,
@@ -50,7 +49,7 @@ class RegistrationCog:
         if member == None:
             # if the current user has roles for admin register command, they cannot use
             # command without parameter
-            if hasRegisterCommandPermission(ctx.guild.id, getAllianceIdFromNick(ctx.message.author.nick), ctx.message.author.roles):
+            if hasAdminPermission(ctx.guild.id, getAllianceIdFromNick(ctx.message.author.nick), ctx.message.author.roles):
                 err =  '{}, **No parameters wih command register.**\n'.format(ctx.message.author.mention)
                 err += 'The register command without parameters can only be used by new members. To register '
                 err += 'another user, please include the members name, whether they are a member, ally, or ambassador, '
@@ -142,7 +141,7 @@ class RegistrationCog:
 
         # CASE 1
         # Command is being used by an administrator. 
-        if ctx.message.author.guild_permissions.administrator or hasRegisterCommandPermission(server.id, allianceId, userRoles):
+        if ctx.message.author.guild_permissions.administrator or hasAdminPermission(server.id, allianceId, userRoles):
 
             # if admin is user command for other user, a user must be provided
             if len(ctx.message.mentions) > 0:
@@ -201,98 +200,107 @@ class RegistrationCog:
             msg += 'Please respond with either **member**, **ally**, or **ambassador**'
             await ctx.message.author.send(msg)
 
-            while True:
-                # wait for user response
-                ans = await self.bot.wait_for('message', timeout=120, check=checkUser)
+            try:
+                while True:
+                    # wait for user response
+                    ans = await self.bot.wait_for('message', timeout=120, check=checkUser)
 
-                # response: member
-                if ans.content.lower() == 'member':
+                    # response: member
+                    if ans.content.lower() == 'member':
 
-                    # if more than one alliance is saved to database,  need to determine which this new member belongs to
-                    ids = getAllianceIds(server.id)
-                    if len(ids) > 1:
-                        msg = 'Welcome {} Member. Which member alliance are you a part of? Please choose from '.format(allianceName)
-                        msg += 'the list below:\n'
-                        for id in ids:
-                            msg += '**{}**\n'.format(id.upper())
-                        await ctx.message.author.send(msg)
-                        id = await self.bot.wait_for('message', timeout=120, check=checkUser)
-
-                        # check user response. If response is not an alliance in DB, repeat the Q, and prompt again
-                        while True:
-                            id = id.content
-
-                            # set the roles, set the nickname, and finish
-                            if isInAlliance(server.id, id.upper()):
-                                memberRoles = getMemberRoles(server.id, id)
-                                for role in memberRoles:
-                                    await newUser.add_roles(getRole(roles, role)) 
-                                await newUser.edit(nick='[{}] {}'.format(id.upper(), newUser.name))
-                                msg = 'Thank you, **I have set your role and your nickname for this server.** You are now all set!'
-                                await ctx.message.author.send(msg)
-                                return
-
-                            else:
-                                msg = '**{}** not recognized. **Please choose from the following list so we can determine which '.format(id)
-                                msg += 'alliance you belong to.**\n'
-                                for id in ids:
-                                    msg += '**{}**\n'.format(id.upper())
-                                await ctx.message.author.send(msg)
-                    
-                    # case when only one alliance is in DB for this server
-                    else:
-                        # set user role based on DB alliance member role, and set nickname to include alliance abreviation
-                        for role in memberRoles:
-                            await newUser.add_roles(getRole(roles, role)) 
-                        await newUser.edit(nick='[{}] {}'.format(allianceId, newUser.name))
-                        msg = 'Thank you, **I have set your role and your nickname for this server.** You are now all set!'
-                        await ctx.message.author.send(msg)
-                        return
-
-                # response: ambassador or ally 
-                elif ans.content.lower() == 'ambassador' or  ans.content.lower() == 'ally':
-
-                    # get values for alliance Id, ambassador and ally roles
-                    allianceId = getAllianceIds(server.id)[0]
-                    ambassadorRoles = getAmbassadorRoles(server.id, allianceId)
-                    allyRoles       = getAllyRoles(server.id, allianceId) 
-
-                    # set user role based on DB ambassador role
-                    if ans.content.lower() == 'ambassador':
-                        for role in ambassadorRoles:
-                            await newUser.add_roles(getRole(roles, role))  
-                    if ans.content.lower() == 'ally':
-                        for role in allyRoles:
-                            await newUser.add_roles(getRole(roles, role))  
-
-                    msg = '**Thank you, I have set your role.**\n'
-                    msg += 'The last thing I need to know is your Alliance abbreviation. Please respond with only your Alliance abbreviation.\n'
-                    msg += '**EXAMPLE RESPONSE:** ABCD'
-                    await ctx.message.author.send(msg)
-
-                    while True:
-                        # wait for user response
-                        ans = await self.bot.wait_for('message', timeout=120, check=checkUser)
-                        # set nickname to include their alliance abreviation
-                        if len(ans.content) < 5:
-                            newUserAlliance = ans.content.upper()
-                            await newUser.edit(nick='[{}] {}'.format(newUserAlliance, newUser.name))
-                            msg = 'Thank you, **I have set your role and your nickname for this server.**'
-                            msg += ' You are now all set!'
+                        # if more than one alliance is saved to database,  need to determine which this new member belongs to
+                        ids = getAllianceIds(server.id)
+                        if len(ids) > 1:
+                            msg = 'Welcome {} Member. Which member alliance are you a part of? Please choose from '.format(allianceName)
+                            msg += 'the list below:\n'
+                            for id in ids:
+                                msg += '**{}**\n'.format(id.upper())
                             await ctx.message.author.send(msg)
-                            break
+                            id = await self.bot.wait_for('message', timeout=120, check=checkUser)
+
+                            # check user response. If response is not an alliance in DB, repeat the Q, and prompt again
+                            while True:
+                                id = id.content
+
+                                # set the roles, set the nickname, and finish
+                                if isInAlliance(server.id, id.upper()):
+                                    memberRoles = getMemberRoles(server.id, id)
+                                    for role in memberRoles:
+                                        await newUser.add_roles(getRole(roles, role)) 
+                                    await newUser.edit(nick='[{}] {}'.format(id.upper(), newUser.name))
+                                    msg = 'Thank you, **I have set your role and your nickname for this server.** You are now all set!'
+                                    await ctx.message.author.send(msg)
+                                    return
+
+                                else:
+                                    msg = '**{}** not recognized. **Please choose from the following list so we can determine which '.format(id)
+                                    msg += 'alliance you belong to.**\n'
+                                    for id in ids:
+                                        msg += '**{}**\n'.format(id.upper())
+                                    await ctx.message.author.send(msg)
+                        
+                        # case when only one alliance is in DB for this server
                         else:
-                            msg = 'I did not understand that response..\n\n'
-                            msg += 'The last thing I need to know is your Alliance abbreviation. Please respond with only your Alliance abbreviation.\n'
-                            msg += '**EXAMPLE RESPONSE:** ABCD'
+                            # set user role based on DB alliance member role, and set nickname to include alliance abreviation
+                            for role in memberRoles:
+                                await newUser.add_roles(getRole(roles, role)) 
+                            await newUser.edit(nick='[{}] {}'.format(allianceId, newUser.name))
+                            msg = 'Thank you, **I have set your role and your nickname for this server.** You are now all set!'
                             await ctx.message.author.send(msg)
-                    break
-                # response was not member or ambassador. reloop
-                else:
-                    msg = 'I did not understand that response..\n\n'
-                    msg += 'Are you a {} member, or an ambassador representing another Alliance?'.format(allianceName)
-                    msg += ' Please respond with either **member** or **ambassador**'
-                    await ctx.message.author.send(msg)
+                            return
+
+                    # response: ambassador or ally 
+                    elif ans.content.lower() == 'ambassador' or  ans.content.lower() == 'ally':
+
+                        # get values for alliance Id, ambassador and ally roles
+                        allianceId = getAllianceIds(server.id)[0]
+                        ambassadorRoles = getAmbassadorRoles(server.id, allianceId)
+                        allyRoles       = getAllyRoles(server.id, allianceId) 
+
+                        # set user role based on DB ambassador role
+                        if ans.content.lower() == 'ambassador':
+                            for role in ambassadorRoles:
+                                await newUser.add_roles(getRole(roles, role))  
+                        if ans.content.lower() == 'ally':
+                            for role in allyRoles:
+                                await newUser.add_roles(getRole(roles, role))  
+
+                        msg = '**Thank you, I have set your role.**\n'
+                        msg += 'The last thing I need to know is your Alliance abbreviation. Please respond with only your Alliance abbreviation.\n'
+                        msg += '**EXAMPLE RESPONSE:** ABCD'
+                        await ctx.message.author.send(msg)
+
+                        while True:
+                            # wait for user response
+                            ans = await self.bot.wait_for('message', timeout=120, check=checkUser)
+                            # set nickname to include their alliance abreviation
+                            if len(ans.content) < 5:
+                                newUserAlliance = ans.content.upper()
+                                await newUser.edit(nick='[{}] {}'.format(newUserAlliance, newUser.name))
+                                msg = 'Thank you, **I have set your role and your nickname for this server.**'
+                                msg += ' You are now all set!'
+                                await ctx.message.author.send(msg)
+                                break
+                            else:
+                                msg = 'I did not understand that response..\n\n'
+                                msg += 'The last thing I need to know is your Alliance abbreviation. Please respond with only your Alliance abbreviation.\n'
+                                msg += '**EXAMPLE RESPONSE:** ABCD'
+                                await ctx.message.author.send(msg)
+                        break
+                    # response was not member or ambassador. reloop
+                    else:
+                        msg = 'I did not understand that response..\n\n'
+                        msg += 'Are you a {} member, or an ambassador representing another Alliance?'.format(allianceName)
+                        msg += ' Please respond with either **member** or **ambassador**'
+                        await ctx.message.author.send(msg)
+
+            # TIME RAN OUT              
+            except asyncio.TimeoutError:
+                msg = '**[EXCEEDED TIME LIMIT] I cannot maintain a secure line of communication...**\n '
+                msg += 'Closing this channel. Information was not saved... **Please try again** ... **goodbye**\n[CLOSED]\n'
+                await ctx.message.author.send(msg)          
+
+
 
 
         ### STEP TWO ###

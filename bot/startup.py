@@ -1,10 +1,16 @@
 import discord
 from discord.ext import commands
 import sys, traceback, platform
-sys.path.append('./utils')
 
 # COGS
-initial_extensions = ['cogs.registration', 'cogs.setup', 'cogs.administration', 'cogs.help', 'cogs.resources']
+initial_extensions = [
+    'cogs.registration',
+    'cogs.setup',
+    'cogs.administration',
+    'cogs.help',
+    'cogs.resources',
+    'cogs.intel'
+    ]
 
 # Load configs
 configFile = open('config')
