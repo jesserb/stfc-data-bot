@@ -182,7 +182,7 @@ class HelpCog:
         except:
             error = "**[ERROR] something went wrong... ...\n\n Have you run Setup before?\n if you have never run setup "
             error += "you must do so before you can use the help commands."
-            await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(error))
+            await ctx.message.author.send('{}'.format(error))
             
 
 # set the cog up
