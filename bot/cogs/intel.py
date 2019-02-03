@@ -103,7 +103,7 @@ class IntelCog:
         ################# ROE COMMANDS #####################
 
         ## just show embed with ROE rules
-        if args[0].lower() == 'roe' and len(args) == 1:
+        if len(args) == 1 and args[0].lower() == 'roe':
             embed = discord.Embed(title=title, description='**(ROE) Rules of Engagement**\n\n{}{}{}'.format(spacer, descDict["roe"], spacer), color=000000)
             embed.set_footer(text=footerText)
             await ctx.send(embed=embed)
@@ -143,7 +143,7 @@ class IntelCog:
 
 
         ## show embed of alliances who have violated ROE
-        elif args[0].lower() == 'roe' and args[1].lower() == 'violations':
+        elif len(args) and args[0].lower() == 'roe' and args[1].lower() == 'violations':
 
             #ERROR CHECK: -> max of 3 arguments allowed here
             if len(args) > 3:
@@ -163,7 +163,7 @@ class IntelCog:
             
 
         ## show embed of alliances who have violated ROE
-        elif args[0].lower() == 'roe' and args[1].lower() == 'violation':
+        elif len(args) and args[0].lower() == 'roe' and args[1].lower() == 'violation':
 
             # ERROR CHECK: --> with this scenario, we must have exactly 3 arguments
             if len(args) != 3:
@@ -185,7 +185,7 @@ class IntelCog:
 
 
         # Intel is being used to add player or alliance to one of the defined lists. Do so here
-        elif args[0].lower() == 'ally' or args[0].lower() == 'kos' or args[0].lower() == 'nap' or args[0].lower() == 'war':
+        elif len(args) and (args[0].lower() == 'ally' or args[0].lower() == 'kos' or args[0].lower() == 'nap' or args[0].lower() == 'war'):
             if len(args) > 3:
                 msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
                 msg += 'When **intel {}** sequence used, you cannot have more than 3 total arguments. '.format(args[0].upper())
