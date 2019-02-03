@@ -284,7 +284,7 @@ def getMember(member, members):
     for m in members:
         if m.name.lower() == member.lower():
             return m
-        return None
+    return None
 
 
 #   serverId: id for current server, from discord guild object
