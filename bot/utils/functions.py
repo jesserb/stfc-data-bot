@@ -206,7 +206,7 @@ def getResourceReliability(resource, tier, system):
         AND System="{}"
     '''.format(resource, system)
     if tier:
-        addition = ' AND AND Tier={}'.format(tier)
+        addition = ' AND Tier={}'.format(tier)
 
     res = queryDatabase(sql + addition)
     return res[0][0]
