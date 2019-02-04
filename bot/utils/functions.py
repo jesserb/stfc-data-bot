@@ -29,8 +29,10 @@ def getROEViolations(serverId, query):
     roeList = ''
     for r in resp:
         roeList += '`{}'.format(r[0])
-        for i in range(len(r[0]), 14):
+        i = len(r[0])
+        while i < 14:
             roeList += '.'
+            i += 1
         roeList += '` `{} violations`\n'.format(r[1])
     return roeList
     
@@ -682,8 +684,10 @@ def prepareResourceResults(emojis, vals):
 
     # to keep things nice and tidy, format system name to be MIN 14 characters long
     systemName = '`{}({})'.format(vals[1], vals[2])
-    for i in range(len(vals[1]), 14):
+    i = len(vals[1])
+    while i < 14:
         systemName += '.'
+        i += 1
     systemName += '`'
     return '{} {} {} {}{}\n'.format(str(resource), str(tier), systemName, region, regionName)
 

@@ -42,7 +42,7 @@ class AdministrationCog:
 
         #ERROR CHECK - dm bot commands not allowed
         try:
-            test = ctx.guild.id # if no guild id then this is a dm
+            ctx.guild.id # if no guild id then this is a dm
         except:
             error = "**You cannot run bot commands in a DM** "
             error += "Please retry your command in a bot friendly channel in your server where I reside."
@@ -104,7 +104,7 @@ class AdministrationCog:
 
         #ERROR CHECK - dm bot commands not allowed
         try:
-            test = ctx.guild.id # if no guild id then this is a dm
+            ctx.guild.id # if no guild id then this is a dm
         except:
             error = "**You cannot run bot commands in a DM** "
             error += "Please retry your command in a bot friendly channel in your server where I reside."

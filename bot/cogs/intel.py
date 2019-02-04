@@ -35,7 +35,7 @@ class IntelCog:
 
         #ERROR CHECK - dm bot commands not allowed
         try:
-            test = ctx.guild.id # if no guild id then this is a dm
+            ctx.guild.id # if no guild id then this is a dm
         except:
             error = "**You cannot run bot commands in a DM** "
             error += "Please retry your command in a bot friendly channel in your server where I reside."
@@ -48,9 +48,10 @@ class IntelCog:
             msg = '{}, your server has not been set up with me. To use this command, a '.format(ctx.message.author.mention)
             msg += 'server administrator must perform the **.setup <AllianceID>** command first.'
             await ctx.send(msg)
+            return
 
         # ERROR CHECK -> Unless only one argument given, and it be ROE, must be a member to use this command
-        if not isAllianceMember(ctx.guild.id, ctx.guild.roles) and len(args) != 1 and args[0] != 'ROE':
+        if not isAllianceMember(ctx.guild.id, ctx.guild.roles) and len(args) != 1 and args[0].lower() != 'roe':
             msg = '{}, For all intel commands other than **.intel ROE**, '.format(ctx.message.author.mention)
             msg += 'you must be a member to use on this server. '
             await ctx.send(msg) 
