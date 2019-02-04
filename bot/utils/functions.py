@@ -204,7 +204,7 @@ def getResourceReliability(resource, tier, system):
         FROM Resources
         WHERE Resource="{}"
         AND System="{}"
-    '''.format(resource, system)
+    '''.format(resource.lower(), system.lower())
     if tier:
         addition = ' AND Tier={}'.format(tier)
 

@@ -139,11 +139,11 @@ class ResourcesCog:
                 msg = 'Response recorded.\nBelow is the resource information, which will be added to the resource database\n'
                 msg += '*Please confirm the data below is correct. To do so, respond with **confirm**. Any other response will '
                 msg += 'close this channel, and the resource information will not be added:\n\n'
-                msg += '**RESOURCE INTELLEGENCE**\n---------------------------\n× Resource: {}\n'.format(resource)
+                msg += '**RESOURCE INTELLEGENCE**\n---------------------------\n× Resource: {}\n'.format(resource.title())
                 if resource != 'dilithium':
                     msg += '× Grade: {}\n'.format(tier)
-                msg += '× System: {} ({})\n'.format(system, lvl)
-                msg += '× Region: {}\n---------------------------\n\n'.format(region)
+                msg += '× System: {} ({})\n'.format(system.title(), lvl)
+                msg += '× Region: {}\n---------------------------\n\n'.format(region.title())
                 msg += 'Respond with **confirm** to commit above results.\nRespond with **cancel** to cancel this transmission.' 
                 await user.send(msg)
 
@@ -184,6 +184,11 @@ class ResourcesCog:
     @commands.command()
     async def resources(self, ctx, *args):
 
+        if len(args) == 2 and args[0].lower() == 'get' and args[1].lower() == 'emojis':
+            emojiFile = discord.File('img/data_stfc_emojis.zip')
+            await ctx.send('Here they are!', file=emojiFile)
+            return
+
         # function to check that reaction is from user who called this command
         def checkUser(reaction, user):
             return user == ctx.message.author
@@ -207,7 +212,7 @@ class ResourcesCog:
             information = '\n[DECRYPTING] Resource Intel... ...\n\n *Select the arrow emojis to page the results.*\n\n'
             information += '⚠️ **NO STFC EMOJIS DETECTED**\n *Loading basic resource table...*\n '
             information += '**Resources works better with the STFC emojis...**\nRun the command **.resources '
-            information += 'stfc emojis** to get the emoji files.\n\n'
+            information += 'get emojis** to get the emoji files.\n\n'
 
         # loop through search parameters, and set resource, region, and tier variable
         footer, resource, region, tier = getSearchQuerys(args, footer, resource, region, tier)
