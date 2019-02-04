@@ -239,7 +239,7 @@ def getResourceResults(resource, tier, region):
     if numFilters > 0:
         sql = sql + whereClause
     
-    return queryDatabase(sql+filter+' ORDER BY Resource == "Dilithium", Resource, Tier DESC, Region')
+    return queryDatabase(sql+filter+' ORDER BY Resource == "dilithium", Resource, Tier DESC, Region')
 
 
 #     args: A list of arguments, representing a resources search query
