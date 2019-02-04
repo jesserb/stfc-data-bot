@@ -222,7 +222,7 @@ def getResourceResults(resource, tier, region):
     numFilters = 0
     if resource:
         numFilters += 1
-        filter += ' Resource="{}"'.format(resource)
+        filter += ' Resource="{}"'.format(resource.lower())
     if tier:
         numFilters += 1
         if numFilters > 1:
@@ -232,9 +232,9 @@ def getResourceResults(resource, tier, region):
     if region:
         numFilters += 1
         if numFilters > 1:
-            filter += ' AND Region="{}"'.format(region)
+            filter += ' AND Region="{}"'.format(region.lower())
         else:
-            filter += ' region="{}"'.format(region)
+            filter += ' region="{}"'.format(region.lower())
 
     if numFilters > 0:
         sql = sql + whereClause
