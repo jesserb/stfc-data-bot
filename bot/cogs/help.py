@@ -16,8 +16,9 @@ class HelpCog:
 
         title = '**DATA BOT INFORMATION**'
         info  = '*Created by **Bop#1308***\n\n'
-        info += '×  **version:** 1.0.0 **BETA**\n'
+        info += '×  **version:** 1.0.0 **ALPHA**\n'
         info += '×  **prefix:** "."\n'
+        info += '×  **help command:** `.help`\n'
         info += '×  **github:** {}\n'.format(GITHUB)
         footerText = 'Message me with feedback, questions, or anything else'
 
