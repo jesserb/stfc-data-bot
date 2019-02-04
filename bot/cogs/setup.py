@@ -223,7 +223,7 @@ class SetupCog:
             try:
                 while True:
                     #wait for user to react
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
 
                     #Interpret response
                     if reaction.emoji == '👍':
@@ -281,7 +281,7 @@ class SetupCog:
             try:
                 while True:
         
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
                     
                     # if user reacts with 'NEXT', move to next interface
                     if reaction.emoji == '✅':
@@ -359,7 +359,7 @@ class SetupCog:
             await msg.add_reaction(self.next)
             
             # Wait for user response, make sure the reaction is the 'NEXT' reaction and from user
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=check)
 
 
 
@@ -393,7 +393,7 @@ class SetupCog:
                 # interpret user interactions. Keep accepting responses until break logic
                 while True:
                 
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
 
                     # if user reacts with 'NEXT', move to next interface
                     if reaction.emoji == self.next:
@@ -448,7 +448,7 @@ class SetupCog:
                 # interpret user interactions. Keep accepting responses until break logic
                 while True:
                     
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
 
                     # Do not auto-assign ambassador roles
                     if reaction.emoji == '❌':
@@ -512,7 +512,7 @@ class SetupCog:
                 # interpret user interactions. Keep accepting responses until break logic
                 while True:
                     
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
 
                     if reaction.emoji == '❌':
                         allyRoles = ambassadorRoles
@@ -570,7 +570,7 @@ class SetupCog:
                 # interpret user interactions. Keep accepting responses until break logic
                 while True:
                 
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
 
                     # if user reacts with 'NEXT', move to next interface
                     if reaction.emoji == self.next:
@@ -618,7 +618,7 @@ class SetupCog:
 
                 while True:
                     #wait for user to react
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
 
                     #Interpret response
                     if reaction.emoji == '👍':
@@ -656,7 +656,7 @@ class SetupCog:
 
                 while True:
                     #wait for user to react
-                    reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
                     
                     #Interpret response
                     if reaction.emoji == '👍':
@@ -696,7 +696,7 @@ class SetupCog:
                     # interpret user interactions. Keep accepting responses until break logic
                     while True:
                     
-                        reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                        reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
 
                         # if user reacts with 'NEXT', move to next interface
                         if reaction.emoji == self.next:
@@ -750,7 +750,7 @@ class SetupCog:
 
                     while True:
                     
-                        reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                        reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
 
                         if reaction.emoji == self.next:
                             break
@@ -783,7 +783,7 @@ class SetupCog:
 
             while True:
             
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=checkUser)
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=240.0, check=checkUser)
                 
                 # if user reacts with 'NEXT', move to next interface
                 if reaction.emoji == '✅':
