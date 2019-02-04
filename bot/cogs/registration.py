@@ -44,8 +44,17 @@ class RegistrationCog:
     @commands.command()
     async def register(self, ctx, member=None, type='', newUserAlliance=''):
 
-        #ERROR CHECKING
 
+        #ERROR CHECK - dm bot commands not allowed
+        try:
+            test = ctx.guild.id # if no guild id then this is a dm
+        except:
+            error = "**You cannot run bot commands in a DM** "
+            error += "Please retry your command in a bot friendly channel in your server where I reside."
+            await ctx.message.author.send('{}'.format(error))
+            return
+        
+        #ERROR CHECKING
         if member == None:
             # if the current user has roles for admin register command, they cannot use
             # command without parameter

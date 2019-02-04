@@ -36,6 +36,16 @@ class ResourcesCog:
     @commands.command()
     async def addresource(self, ctx):
 
+        #ERROR CHECK - dm bot commands not allowed
+        try:
+            test = ctx.guild.id # if no guild id then this is a dm
+        except:
+            error = "**You cannot run bot commands in a DM** "
+            error += "Please retry your command in a bot friendly channel in your server where I reside."
+            await ctx.message.author.send('{}'.format(error))
+            return
+        
+
         # Variables
         user = ctx.message.author
         resource = ''
@@ -183,6 +193,17 @@ class ResourcesCog:
     #  -  *args: a list of string search parameters, representing desired filters to place on the resources results.
     @commands.command()
     async def resources(self, ctx, *args):
+
+
+        #ERROR CHECK - dm bot commands not allowed
+        try:
+            test = ctx.guild.id # if no guild id then this is a dm
+        except:
+            error = "**You cannot run bot commands in a DM** "
+            error += "Please retry your command in a bot friendly channel in your server where I reside."
+            await ctx.message.author.send('{}'.format(error))
+            return
+        
 
         if len(args) == 2 and args[0].lower() == 'get' and args[1].lower() == 'emojis':
             emojiFile = discord.File('img/data_stfc_emojis.zip')

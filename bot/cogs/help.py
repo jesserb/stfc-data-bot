@@ -31,6 +31,16 @@ class HelpCog:
 
     @commands.command()
     async def help(self, ctx, type=''):
+
+        #ERROR CHECK - dm bot commands not allowed
+        if type:
+            try:
+                test = ctx.guild.id # if no guild id then this is a dm
+            except:
+                error = "**You cannot run bot commands in a DM** "
+                error += "Please retry your command in a bot friendly channel in your server where I reside."
+                await ctx.message.author.send('{}'.format(error))
+                return
         
         try:
             allianceId = ''
@@ -136,7 +146,7 @@ class HelpCog:
                 genCommands += '**Examples:**\n`.info`\n\n'
 
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, genCommands+genRegisterCommands))
-            
+                await ctx.send('{}, I sent you a DM witth general bot command instructions').format(ctx.message.author.mention)
 
             if type.lower() != 'resources' and isAdmin and type.lower() == 'admin':
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(
@@ -162,23 +172,25 @@ class HelpCog:
                     memberIntelCommands += '*returns the ROE guidelines as they are currently set on this server.*\n'
                     memberIntelCommands += '```×  ROE: must have value ROE```'
                     memberIntelCommands += '**Examples:**\n`.intel ROE`\n\n'
+                    toShow = memberIntelCommands
                 
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, toShow))
-
+                await ctx.send('{}, I sent you a DM witth intel command instructions').format(ctx.message.author.mention)
 
             if type.lower() != 'resources' and isAdmin and type.lower() == 'setup':
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, adminSetupCommands))
-
+                await ctx.send('{}, I sent you a DM witth setup command instructions').format(ctx.message.author.mention)
 
             if type.lower() != 'resources' and type.lower() == 'register':
                 toShow = genRegisterCommands
                 if isAdmin:
                     toShow = adminRegisterCommands + genRegisterCommands
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, toShow))
-
+                await ctx.send('{}, I sent you a DM witth register command instructions').format(ctx.message.author.mention)
 
             if type.lower() == 'resources':
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, resourceCommands))
+                await ctx.send('{}, I sent you a DM witth resources command instructions').format(ctx.message.author.mention)
 
         except:
             error = "**[ERROR] something went wrong... ...\n\n Have you run Setup before?\n if you have never run setup "

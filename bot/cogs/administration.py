@@ -40,6 +40,16 @@ class AdministrationCog:
     @commands.command()
     async def settings(self, ctx, allianceId=''):
 
+        #ERROR CHECK - dm bot commands not allowed
+        try:
+            test = ctx.guild.id # if no guild id then this is a dm
+        except:
+            error = "**You cannot run bot commands in a DM** "
+            error += "Please retry your command in a bot friendly channel in your server where I reside."
+            await ctx.message.author.send('{}'.format(error))
+            return
+        
+
         if not allianceId:
             err =  '{}, Missing alliance ID paramater.'.format(ctx.message.author.mention)
             await ctx.send(err)
@@ -90,6 +100,17 @@ class AdministrationCog:
     # -number - the number of messages to delete, not including this command message
     @commands.command()
     async def clear(self, ctx, number=0):
+
+
+        #ERROR CHECK - dm bot commands not allowed
+        try:
+            test = ctx.guild.id # if no guild id then this is a dm
+        except:
+            error = "**You cannot run bot commands in a DM** "
+            error += "Please retry your command in a bot friendly channel in your server where I reside."
+            await ctx.message.author.send('{}'.format(error))
+            return
+        
 
         if not ctx.message.author.guild_permissions.administrator:
             err =  '{}, You do not have permission to use this command.'.format(ctx.message.author.mention)

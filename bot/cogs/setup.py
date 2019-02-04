@@ -31,6 +31,16 @@ class SetupCog:
     @commands.command()
     async def set(self, ctx, *args):
 
+        #ERROR CHECK - dm bot commands not allowed
+        try:
+            test = ctx.guild.id # if no guild id then this is a dm
+        except:
+            error = "**You cannot run bot commands in a DM** "
+            error += "Please retry your command in a bot friendly channel in your server where I reside."
+            await ctx.message.author.send('{}'.format(error))
+            return
+        
+
         # ERROR CHECKING
         aIds = getAllianceIds(ctx.guild.id)
         if not len(aIds):
@@ -120,20 +130,19 @@ class SetupCog:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     @commands.command()
     async def setup(self, ctx, *args):
 
+
+        #ERROR CHECK - dm bot commands not allowed
+        try:
+            test = ctx.guild.id # if no guild id then this is a dm
+        except:
+            error = "**You cannot run bot commands in a DM** "
+            error += "Please retry your command in a bot friendly channel in your server where I reside."
+            await ctx.message.author.send('{}'.format(error))
+            return
+        
         # Some quick error checking
         if not ctx.message.author.guild_permissions.administrator:
             err =  '{}, You do not have permission to use this command.\n**must be Administrator**'.format(ctx.message.author.mention)

@@ -33,6 +33,15 @@ class IntelCog:
     @commands.command()
     async def intel(self, ctx, *args):
 
+        #ERROR CHECK - dm bot commands not allowed
+        try:
+            test = ctx.guild.id # if no guild id then this is a dm
+        except:
+            error = "**You cannot run bot commands in a DM** "
+            error += "Please retry your command in a bot friendly channel in your server where I reside."
+            await ctx.message.author.send('{}'.format(error))
+            return
+        
         # ERROR CHECKING
         aIds = getAllianceIds(ctx.guild.id)
         if not len(aIds):
