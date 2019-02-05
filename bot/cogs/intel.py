@@ -179,11 +179,19 @@ class IntelCog:
         ## show embed of alliances who have violated ROE
         elif len(args) and args[0].lower() == 'roe' and args[1].lower() == 'violation':
 
-            # ERROR CHECK: --> with this scenario, we must have exactly 3 arguments
-            if len(args) != 3:
+            # ERROR CHECK: --> with this scenario, we must have no more than 4 arguments, and no less than 3 arguments
+            if len(args) < 3 or len(args) > 4:
                 msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
-                msg += 'When **intel ROE violation** sequence used, you must include and ONLY include '
-                msg += 'the accused Allaince ID.\n*example: .intel ROE violation TEST*'
+                msg += 'When **intel ROE violation** sequence used, you must include a mandatory alliance abrv. '
+                msg += 'as the 3rd argument, with an **optional** player as the 4th argument.\n'
+                msg += '*example: .intel ROE violation TEST* or *.intel ROE violation TEST testGuy* or *.intel ROE violation n/a testGuy*'
+                await ctx.send(msg)
+                return
+
+            if len(args[2]) < 2 or len(args[2]) > 4:
+                msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
+                msg += 'When **intel ROE violation** sequence used, you must include a mandatory alliance abrv. '
+                msg+= 'as the 3rd argument. The value **{}** does not fit the criteria for an alliance abrv.'.format(args[2])
                 await ctx.send(msg)
                 return
 
@@ -193,8 +201,13 @@ class IntelCog:
                 await ctx.send(msg)
                 return 
 
-            saveROE(serverId, args[2].upper()) 
-            await ctx.send('{},I have saved the ROE violation by {}.'.format(ctx.message.author.mention, args[2].upper()))  
+            violator = args[2].upper()
+            if len(args) == 3:
+                saveROE(serverId, args[2].upper()) 
+            if len(args) == 4:
+                violator = '[{}] {}'.format(args[2].upper(), args[3])
+                saveROE(serverId, args[2].upper(), args[3])   
+            await ctx.send('{},I have saved the ROE violation by {}.'.format(ctx.message.author.mention, violator))  
             return  
 
 
@@ -227,6 +240,13 @@ class IntelCog:
 
             saveIntellegence(serverId, args[2].upper(), allianceStandingDict)
             await ctx.send('{}, **{} entry {} Saved**.'.format(ctx.message.author.mention,args[0].upper(), args[2].upper()))  
+            return
+
+        else:
+            msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
+            msg += 'I did not understand your query. Please try **.help intel** to see valid arguments '
+            msg += 'for the command **intel**.'
+            await ctx.send(msg)
             return
 
         embed = discord.Embed(title=title, description=intro+info, color=000000)

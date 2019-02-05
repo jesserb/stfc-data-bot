@@ -14,7 +14,7 @@ from utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
 
 def getROEViolations(serverId, query):
     sql = '''
-        SELECT AllianceID, Violations
+        SELECT AllianceID, Violations, PlayerName
         FROM ROE
         WHERE ServerId={}
     '''.format(serverId)
@@ -30,10 +30,18 @@ def getROEViolations(serverId, query):
     for r in resp:
         roeList += '`{}'.format(r[0])
         i = len(r[0])
-        while i < 14:
+        while i < 4:
             roeList += '.'
             i += 1
-        roeList += '` `{} violations`\n'.format(r[1])
+        roeList += '`'
+
+        roeList += ' `{}'.format(r[2] if r[2] != None else 'N/A')
+        i = len(r[2]) if r[2] != None else 3
+        while i < 17:
+            roeList += '.'
+            i += 1
+        roeList += '`'
+        roeList += ' `{} violations`\n'.format(r[1])
     return roeList
     
 
