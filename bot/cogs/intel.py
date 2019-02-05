@@ -62,6 +62,8 @@ class IntelCog:
         allianceId = aIds[0]
         roles      = ctx.guild.roles
         isAdmin    = hasAdminPermission(serverId, allianceId, roles)
+        if ctx.message.author.guild_permissions.administrator:
+            isAdmin = True
         title      = getAllianceName(serverId)
         descDict = {
             "roe": getRoeRules(serverId, allianceId),

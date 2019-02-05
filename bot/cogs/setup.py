@@ -61,6 +61,8 @@ class SetupCog:
         allianceId = aIds[0]
         roles      = ctx.guild.roles
         isAdmin    = hasAdminPermission(serverId, allianceId, roles)
+        if ctx.message.author.guild_permissions.administrator:
+            isAdmin = True
         user       = ctx.message.author
         infoDict = {
             "roe": getRoeRules(serverId, allianceId),

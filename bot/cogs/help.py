@@ -35,7 +35,7 @@ class HelpCog:
         #ERROR CHECK - dm bot commands not allowed
         if type:
             try:
-                test = ctx.guild.id # if no guild id then this is a dm
+                ctx.guild.id # if no guild id then this is a dm
             except:
                 error = "**You cannot run bot commands in a DM** "
                 error += "Please retry your command in a bot friendly channel in your server where I reside."
@@ -50,6 +50,9 @@ class HelpCog:
                 allianceId = getAllianceIdFromNick(ctx.message.author.nick)
                 isAdmin = hasAdminPermission(ctx.guild.id, allianceId, ctx.message.author.roles)
                 isMember = isAllianceMember(ctx.guild.id, ctx.message.author.roles)
+
+                if ctx.message.author.guild_permissions.administrator:
+                    isAdmin = True
 
 
             title = '**DATA COMMANDS OVERVIEW**'
