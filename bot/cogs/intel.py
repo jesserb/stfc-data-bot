@@ -117,7 +117,8 @@ class IntelCog:
 
         ## just show embed with ROE rules
         if len(args) == 1 and args[0].lower() == 'roe':
-            embed = discord.Embed(title=title, description='**(ROE) Rules of Engagement**\n\n{}{}{}'.format(spacer, descDict["roe"], spacer), color=000000)
+            toShow = descDict["roe"] if descDict["roe"] else '**ROE Rules have not been set on the server.**'
+            embed = discord.Embed(title=title, description='**(ROE) Rules of Engagement**\n\n{}{}{}'.format(spacer, toShow, spacer), color=000000)
             embed.set_footer(text=footerText)
             await ctx.send(embed=embed)
             return
