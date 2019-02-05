@@ -28,6 +28,7 @@ class SetupCog:
         self.next = '\N{BLACK RIGHTWARDS ARROW}'
     
 
+
     @commands.command()
     async def set(self, ctx, *args):
 
@@ -452,7 +453,6 @@ class SetupCog:
 
                     # Do not auto-assign ambassador roles
                     if reaction.emoji == '❌':
-                        ambassadorRoles = []
                         break
 
                     # if user reacts with 'NEXT', move to next interface
@@ -491,7 +491,7 @@ class SetupCog:
                 explanation += 'to specify which roles to assign allied ambassadors. These roles will be auto-assigned '
                 explanation += 'when using the register command with the argument **ally**\n\n. **Please select the '
                 explanation += 'corresponding symbols which represent which roles should be granted to allied ambassadors.**\n\n'
-                desc = '**select ❌ to not differentiate between Allied and Non-Allied Ambassadors**\n\n'
+                explanation += '**select ❌ to not differentiate between Allied and Non-Allied Ambassadors**\n\n'
                 
                 # set up a list of roles on this server
                 desc = ''
@@ -793,7 +793,7 @@ class SetupCog:
                         allianceAcronym,
                         allowManualRegister,
                         allowPrivateChannelCreation,
-                        selectedCategory.name, 
+                        selectedCategory.name if selectedCategory else '', 
                         memberRoles,
                         ambassadorRoles,
                         allyRoles,
@@ -836,9 +836,7 @@ class SetupCog:
             error += 'Information NOT Saved...\n**Please try again**'
             embed = discord.Embed(title=title, description=error, color=1234123)
             embed.set_footer(text='TRANSMISSION CLOSED | PLEASE TRY AGAIN')
-            msg = await ctx.channel.send(embed=embed)
-            await msg.add_reaction(emoji='👍')
-            await msg.add_reaction(emoji='👎')  
+            msg = await ctx.channel.send(embed=embed) 
 
 
 

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import sys, asyncio
 from utils.functions import databaseReset, getSettings, getSetupSummary, isInAlliance
-
+from utils.data_database import deleteServerSettings
 
 configFile = open('config')
 configs = configFile.readlines()
@@ -17,8 +17,6 @@ class AdministrationCog:
     def __init__(self, bot):
         self.bot = bot
     
-
-
 
     # Can be used by bot owner only.
     # Command purges the database of all data
@@ -49,6 +47,26 @@ class AdministrationCog:
             await ctx.message.author.send('{}'.format(error))
             return
         
+
+        def checkUser(message):
+            return (message.author == ctx.message.author)
+
+        # USER WISHES to delee settings
+        if allianceId.lower() == 'delete' and ctx.message.author.guild_permissions.administrator:
+            msg = '{}, This action will delete all server specific information. **Are you sure?**\n'.format(ctx.message.author.mention)
+            msg += 'please type and send **confirm** to delete ALL server settings.'
+            await ctx.send(msg)
+
+            try:
+                ans = await self.bot.wait_for('message', timeout=240.0, check=checkUser)
+                if ans.content.lower() == 'confirm':
+                    deleteServerSettings(ctx.guild.id)
+                    await ctx.send('**{}, your settings have been erased**').format(ctx.message.author.mention)
+                    return
+
+            except asyncio.TimeoutError:
+                await ctx.send('**{}, command timed out**').format(ctx.message.author.mention)
+                return
 
         if not allianceId:
             err =  '{}, Missing alliance ID paramater.'.format(ctx.message.author.mention)

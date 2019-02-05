@@ -12,6 +12,21 @@ initial_extensions = [
     'cogs.intel'
     ]
 
+
+# determine which bot to load up
+botType = ''
+# error checking
+if len(sys.argv) > 2:
+    print('**ERROR: Too many arguments. program takes at most one.\nexiting... ... ...')
+    sys.exit()
+    
+# handle argument
+if len(sys.argv) > 1:
+    botType = sys.argv[1]
+else:
+    botType = 'DATA'
+
+
 # Load configs
 configFile = open('config')
 configs = configFile.readlines()
@@ -19,10 +34,14 @@ config = {
     'DATA': {
         'token': (configs[1].split()[1]).split('\n')[0],
         'prefix': (configs[2].split()[1]).split('\n')[0],
-    }
+    },
+    'DATAtestsim': {
+        'token': (configs[6].split()[1]).split('\n')[0],
+        'prefix': (configs[7].split()[1]).split('\n')[0],
+    },
 }
 
-bot = commands.Bot(command_prefix = config['DATA']['prefix'])
+bot = commands.Bot(command_prefix = config[botType]['prefix'])
 bot.remove_command('help')
 
 @bot.event
@@ -50,4 +69,4 @@ async def on_ready():
         print('Successfully logged in and booted...! Use prefix: "'+config['DATA']['prefix']+'".\n\n')
 
 # Start your engines~~
-bot.run(config['DATA']['token'], bot=True, reconnect=True)
+bot.run(config[botType]['token'], bot=True, reconnect=True)
