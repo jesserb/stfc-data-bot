@@ -24,24 +24,24 @@ def getROEViolations(serverId, query):
     resp = queryDatabase(sql)
 
     if not len(resp):
-        return '**No ROE Violations'
+        return ['**No ROE Violations']
+    return resp
+    
+
+
+
+def getFormattedROEViolations(resp):
 
     roeList = ''
     for r in resp:
-        roeList += '`{}'.format(r[0])
-        i = len(r[0])
-        while i < 4:
-            roeList += '.'
-            i += 1
-        roeList += '`'
-
-        roeList += ' `{}'.format(r[2] if r[2] != None else 'N/A')
+        roeList += '`[{}]` '.format(r[0].upper() if r[0].lower() != 'n/a' else '????')
+        roeList += '`{}'.format(r[2] if r[2] != None else '.')
         i = len(r[2]) if r[2] != None else 3
-        while i < 17:
+        while i < 15:
             roeList += '.'
             i += 1
         roeList += '`'
-        roeList += ' `{} violations`\n'.format(r[1])
+        roeList += ' `{} count`\n'.format(r[1])
     return roeList
     
 
@@ -177,6 +177,18 @@ def getWarInfo(serverId, allianceId):
         return resp[0][0]
     return ''
 
+
+def getFieldIntel(inputStr, newline):
+    returnStr = ''
+    count = 0
+    for a in inputStr.split(','):
+        count += 1
+        if count < newline:
+            returnStr += '{}, '.format(a)
+        else:
+            count = 0
+            returnStr += '\n{}, '.format(a)
+    return returnStr[:(len(returnStr) - 2)]
 
 
 def getHomeInfo(serverId, allianceId):

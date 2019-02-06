@@ -18,17 +18,21 @@ from utils.functions import (
     hasIntel,
     hasGeneralInfo,
     getROEViolations,
-    isAllianceMember
+    getFormattedROEViolations,
+    isAllianceMember,
+    getFieldIntel
 )
 from utils.data_database import saveIntellegence, saveROE
 from utils.constants import GITHUB
-
+import math as m
 
 
 class IntelCog:
     
     def __init__(self, bot):
         self.bot = bot
+        self.next = '\N{BLACK RIGHTWARDS ARROW}'
+        self.prev = '\N{LEFTWARDS BLACK ARROW}'
     
     @commands.command()
     async def intel(self, ctx, *args):
@@ -86,8 +90,8 @@ class IntelCog:
             "kos": getKos(serverId),
             "war": getWar(serverId)
         }
-        intro = '[OPENING] Secure connection...\n[CREDENTIALS] confirmed...\n'
-        intro += '*Transmitting* sensitive data.. ...\n\n**Below is the confidential intel for {}.**\n'.format(allianceId)
+        intro = '[OPENING] Secure connection...\n'
+        intro += '*Transmitting sensitive data.. ...*\n\n'
         footerText = 'SECURE CONNECTION: true, CREDENTIALS CONFIRMED: true'
         info = ''
         spacer = '\n--------------------------------------------------\n'
@@ -110,13 +114,24 @@ class IntelCog:
                     descDict["war"],
                     spacer
                 )
+                embed = discord.Embed(title='Confidential Intel for {}\n'.format(allianceId), description=intro, color=000000)
+                embed.set_author(name=title, icon_url=ctx.guild.icon_url)
+                embed.add_field(name='**{} Home System**'.format(allianceId), value=descDict["home"]+spacer if descDict["home"] else '*No home system*\n', inline=False)
+                embed.add_field(name='**Allies**', value=getFieldIntel(infoDict["aoa"], 5) if infoDict["aoa"] else '*No Allied Alliances*', inline=True)
+                embed.add_field(name='**NAPs**', value=getFieldIntel(infoDict["nap"], 5) if infoDict["nap"] else '*No NAPs*', inline=True)
+                embed.add_field(name='**KOS List**', value=getFieldIntel(infoDict["kos"], 2) if infoDict["kos"] else '*No KOS Alliances*', inline=True)
+                embed.add_field(name='**Decl. of War**', value=getFieldIntel(infoDict["war"], 5) if infoDict["war"] else '*No Ongoing Wars*', inline=True)
+                embed.add_field(name='.', value=spacer)
+                embed.set_footer(text=footerText)
+                await ctx.send(embed=embed)
+                return
 
 
 
         ################# ROE COMMANDS #####################
 
         ## just show embed with ROE rules
-        if len(args) == 1 and args[0].lower() == 'roe':
+        elif len(args) == 1 and args[0].lower() == 'roe':
             toShow = descDict["roe"] if descDict["roe"] else '**ROE Rules have not been set on the server.**'
             embed = discord.Embed(title=title, description='**(ROE) Rules of Engagement**\n\n{}{}{}'.format(spacer, toShow, spacer), color=000000)
             embed.set_footer(text=footerText)
@@ -125,7 +140,7 @@ class IntelCog:
         
 
 
-        ## jCheck the single argument. Show results which fit the filter query
+        ## Check the single argument. Show results which fit the filter query
         elif len(args) == 1:
             if args[0].lower() == 'allies':
                 info = '{}**Alliance of Alliances**\n{}{}{}'.format(
@@ -157,6 +172,7 @@ class IntelCog:
 
 
         ## show embed of alliances who have violated ROE
+        ## NEED TO PAGE THESE RUSULTS!, Only case of such
         elif len(args) and args[0].lower() == 'roe' and args[1].lower() == 'violations':
 
             #ERROR CHECK: -> max of 3 arguments allowed here
@@ -168,11 +184,74 @@ class IntelCog:
                     await ctx.send(msg)
                     return
 
+            # function to check that reaction is from user who called this command
+            def checkUser(reaction, user):
+                return user == ctx.message.author
+            
+            # violations is paged, so we need some variables to help do that correctly
+            idx = 0
+            maxPage = 10
+            page = 1
+            numPages = 1
+            intro = '[OPENING] Secure connection...\n*Transmitting* sensitive data.. ...\n\n'
+
             # check to see if a specific player or alliance was mentioned, to add to the query
             query = ''
             if len(args) == 3:
                 query = args[2].upper()
-            info = '{}{}{}'.format(spacer, getROEViolations(serverId, query), spacer[2::])
+
+            # get this servers violations, and determine number of pages
+            results = getROEViolations(serverId, query)
+            numPages = m.ceil(len(results) / maxPage)
+            pageEnd = maxPage if len(results) >= maxPage else len(results)
+
+            msg = ''
+            roeList = ''
+            try:
+                firstPass = True
+                while True:
+                    roeList = getFormattedROEViolations(results[idx:pageEnd])
+                    embed = discord.Embed(title='**ROE Violation Counts**', description=intro, color=000000)
+                    embed.set_author(name=title, icon_url=ctx.guild.icon_url)
+                    embed = discord.Embed(title=title, description=intro+spacer+roeList+spacer[1::], color=000000)
+                    embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
+                    if firstPass:
+                        msg = await ctx.send(embed=embed)
+                        firstPass = False
+                    else:
+                        await msg.edit(embed=embed)
+
+
+                    if page > 1:
+                        await msg.add_reaction(emoji=self.prev)
+                    if page * maxPage < len(results):
+                        await msg.add_reaction(emoji=self.next)
+
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=checkUser)
+
+                    # page the results forward, reset page number, page end, and the index
+                    if reaction.emoji == self.next:
+                        page += 1
+                        idx = pageEnd
+                        pageEnd = (page * maxPage) if len(results) >= (page * maxPage) else len(results)
+
+                    # page the results backwards, reset page number, page end, and the index
+                    if reaction.emoji == self.prev:
+                        page -= 1
+                        pageEnd = idx
+                        idx = pageEnd - maxPage
+
+                    # clear ALL reactions, reset state of interface.
+                    await msg.clear_reactions()
+                return
+
+            # UH OH TIMED OUT
+            except asyncio.TimeoutError:
+                embed = discord.Embed(title='**ROE Violation Counts**', description=intro, color=000000)
+                embed.set_author(name=title, icon_url=ctx.guild.icon_url)
+                embed.set_footer(text='CONNECTION CLOSED: Session timed out')
+                await msg.edit(embed=embed)
+                return
 
             
 
@@ -249,8 +328,8 @@ class IntelCog:
             await ctx.send(msg)
             return
 
-        embed = discord.Embed(title=title, description=intro+info, color=000000)
-        embed.set_thumbnail(url = ctx.guild.icon_url)
+        embed = discord.Embed(title='Confidential Intel for {}\n'.format(allianceId), description=intro+info, color=000000)
+        embed.set_author(name=title, icon_url=ctx.guild.icon_url)
         embed.set_footer(text=footerText)
         await ctx.send(embed=embed)
 
