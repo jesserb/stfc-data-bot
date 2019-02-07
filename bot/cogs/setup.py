@@ -60,7 +60,7 @@ class SetupCog:
         serverId   = ctx.guild.id
         allianceId = aIds[0]
         roles      = ctx.guild.roles
-        isAdmin    = hasAdminPermission(serverId, allianceId, roles)
+        isAdmin    = hasAdminPermission(serverId, allianceId, ctx.message.author.roles)
         if ctx.message.author.guild_permissions.administrator:
             isAdmin = True
         user       = ctx.message.author
