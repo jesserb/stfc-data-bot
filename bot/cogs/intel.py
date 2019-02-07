@@ -211,9 +211,8 @@ class IntelCog:
                 firstPass = True
                 while True:
                     roeList = getFormattedROEViolations(results[idx:pageEnd])
-                    embed = discord.Embed(title='**ROE Violation Counts**', description=intro, color=000000)
+                    embed = discord.Embed(title='**ROE Violation Counts**', description=intro+spacer+roeList+spacer[1::], color=000000)
                     embed.set_author(name=title, icon_url=ctx.guild.icon_url)
-                    embed = discord.Embed(title=title, description=intro+spacer+roeList+spacer[1::], color=000000)
                     embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
                     if firstPass:
                         msg = await ctx.send(embed=embed)
@@ -247,10 +246,11 @@ class IntelCog:
 
             # UH OH TIMED OUT
             except asyncio.TimeoutError:
-                embed = discord.Embed(title='**ROE Violation Counts**', description=intro, color=000000)
+                embed = discord.Embed(title='**ROE Violation Counts**', description=intro+spacer+roeList+spacer[1::], color=000000)
                 embed.set_author(name=title, icon_url=ctx.guild.icon_url)
                 embed.set_footer(text='CONNECTION CLOSED: Session timed out')
-                await msg.edit(embed=embed)
+                msg = await msg.edit(embed=embed)
+                await msg.clear_reactions()
                 return
 
             

@@ -349,6 +349,8 @@ class RegistrationCog:
             # finally, give the new user permission to see channel
             await channel.set_permissions(newUser, overwrite=show)
 
+        await ctx.send('{}, **Registration complete.** {} is all set'.format(ctx.message.author.mention, newUser.mention))
+
         
 
 # set the cog up
