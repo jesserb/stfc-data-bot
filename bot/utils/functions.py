@@ -34,7 +34,12 @@ def getFormattedROEViolations(resp):
 
     roeList = ''
     for r in resp:
-        roeList += '`[{}]` '.format(r[0].upper() if r[0].lower() != 'n/a' else '????')
+        roeList += '`[{}]'.format(r[0].upper() if r[0].lower() != 'n/a' else '????')
+        i = len(r[0]) if r[0].lower() else 4
+        while i < 5:
+            roeList += '.'
+            i += 1
+        roeList += '` '
         roeList += '`{}'.format(r[2] if r[2] != None else '.')
         i = len(r[2]) if r[2] != None else 3
         while i < 15:

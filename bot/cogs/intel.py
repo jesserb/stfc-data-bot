@@ -65,7 +65,7 @@ class IntelCog:
         #variables
         serverId   = ctx.guild.id
         allianceId = aIds[0]
-        roles      = ctx.guild.roles
+        roles      = ctx.message.author.roles
         isAdmin    = hasAdminPermission(serverId, allianceId, roles)
         if ctx.message.author.guild_permissions.administrator:
             isAdmin = True
@@ -116,12 +116,12 @@ class IntelCog:
                 )
                 embed = discord.Embed(title='Confidential Intel for {}\n'.format(allianceId), description=intro, color=000000)
                 embed.set_author(name=title, icon_url=ctx.guild.icon_url)
-                embed.add_field(name='**{} Home System**'.format(allianceId), value=descDict["home"]+spacer if descDict["home"] else '*No home system*\n', inline=False)
+                embed.add_field(name='**{} Home System**'.format(allianceId), value=descDict["home"]+'\n**{}**'.format(spacer) if descDict["home"] else '*No home system*\n', inline=False)
                 embed.add_field(name='**Allies**', value=getFieldIntel(infoDict["aoa"], 5) if infoDict["aoa"] else '*No Allied Alliances*', inline=True)
                 embed.add_field(name='**NAPs**', value=getFieldIntel(infoDict["nap"], 5) if infoDict["nap"] else '*No NAPs*', inline=True)
                 embed.add_field(name='**KOS List**', value=getFieldIntel(infoDict["kos"], 2) if infoDict["kos"] else '*No KOS Alliances*', inline=True)
                 embed.add_field(name='**Decl. of War**', value=getFieldIntel(infoDict["war"], 5) if infoDict["war"] else '*No Ongoing Wars*', inline=True)
-                embed.add_field(name='.', value=spacer)
+                embed.add_field(name=spacer, value='.', inline=False)
                 embed.set_footer(text=footerText)
                 await ctx.send(embed=embed)
                 return
