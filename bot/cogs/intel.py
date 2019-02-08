@@ -22,7 +22,7 @@ from utils.functions import (
     isAllianceMember,
     getFieldIntel
 )
-from utils.data_database import saveIntellegence, saveROE
+from utils.data_database import saveIntellegence, saveROE, removeROE
 from utils.constants import GITHUB
 import math as m
 
@@ -205,20 +205,20 @@ class IntelCog:
             numPages = m.ceil(len(results) / maxPage)
             pageEnd = maxPage if len(results) >= maxPage else len(results)
 
-            msg = ''
-            roeList = ''
+
+            roeList = getFormattedROEViolations(results[idx:pageEnd])
+            embed = discord.Embed(title='**ROE Violation Counts**', description=intro+spacer+roeList+spacer[1::], color=000000)
+            embed.set_author(name=title, icon_url=ctx.guild.icon_url)
+            embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
+            msg = await ctx.send(embed=embed)
+
             try:
-                firstPass = True
                 while True:
                     roeList = getFormattedROEViolations(results[idx:pageEnd])
                     embed = discord.Embed(title='**ROE Violation Counts**', description=intro+spacer+roeList+spacer[1::], color=000000)
                     embed.set_author(name=title, icon_url=ctx.guild.icon_url)
                     embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
-                    if firstPass:
-                        msg = await ctx.send(embed=embed)
-                        firstPass = False
-                    else:
-                        await msg.edit(embed=embed)
+                    await msg.edit(embed=embed)
 
 
                     if page > 1:
@@ -255,8 +255,53 @@ class IntelCog:
 
             
 
-        ## show embed of alliances who have violated ROE
+        ## ADMIN INTEL COMMAND - add user or alliance or both to the ROE violation list
         elif len(args) and args[0].lower() == 'roe' and args[1].lower() == 'violation':
+
+            # ERROR CHECK: --> with this scenario, you must have admin role
+            if not isAdmin:
+                msg = '{}, **You do not have permission to add to the ROE violations**\n'.format(ctx.message.author.mention)
+                await ctx.send(msg)
+                return 
+
+  
+            # Command allows you to REMOVE a user or alliance from the roe violations list
+            if len(args) > 4 and args[2].lower() == 'remove':
+
+                if len(args) > 5:
+                    msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
+                    msg += 'When **intel ROE violation remove** sequence used, you must include a mandatory alliance abrv. '
+                    msg += 'as the 4th argument, with an **optional** player as the 5th argument.\n'
+                    msg += '*example: .intel ROE violation remove TEST* or *.intel ROE violation remove TEST testGuy* or *.intel ROE violation remove n/a testGuy*'
+                    await ctx.send(msg)
+                    return 
+
+                if len(args[3]) < 2 or len(args[3]) > 4:
+                    msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
+                    msg += 'When **intel ROE violation remove** sequence used, you must include a mandatory alliance abrv. '
+                    msg+= 'as the 4th argument. The value **{}** does not fit the criteria for an alliance abrv.'.format(args[2])
+                    await ctx.send(msg)
+                    return
+
+                violator = args[2].upper()
+                success = False
+                if len(args) == 4:
+                    success = removeROE(serverId, args[3].upper()) 
+                if len(args) == 5:
+                    violator = '[{}] {}'.format(args[3].upper(), args[4])
+                    success = removeROE(serverId, args[3].upper(), args[4])   
+
+                if not success:
+                    msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
+                    msg += 'We could not find the alliance and/or player name in the ROE violations list.\n'
+                    msg+= 'make sure you type the alliance ID and player name *(if applicable)* exactly as is in the list. '
+                    msg += 'If you are removing a single player without an alliance, use **n/a** for the Alliance ID'
+                    await ctx.send(msg)
+                    return    
+
+                await ctx.send('{},I have removed all ROE violation by {}.'.format(ctx.message.author.mention, violator))  
+                return  
+
 
             # ERROR CHECK: --> with this scenario, we must have no more than 4 arguments, and no less than 3 arguments
             if len(args) < 3 or len(args) > 4:
@@ -274,11 +319,6 @@ class IntelCog:
                 await ctx.send(msg)
                 return
 
-            # ERROR CHECK: --> with this scenario, you must have admin role
-            if not isAdmin:
-                msg = '{}, **You do not have permission to add to the ROE violations**\n'.format(ctx.message.author.mention)
-                await ctx.send(msg)
-                return 
 
             violator = args[2].upper()
             if len(args) == 3:

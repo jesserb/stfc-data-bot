@@ -149,7 +149,7 @@ class HelpCog:
                 genCommands += '**Examples:**\n`.info`\n\n'
 
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, genCommands+genRegisterCommands))
-                await ctx.send('{}, I sent you a DM witth general bot command instructions').format(ctx.message.author.mention)
+                await ctx.send('{}, I sent you a DM witth general bot command instructions'.format(ctx.message.author.mention))
 
             if type.lower() != 'resources' and isAdmin and type.lower() == 'admin':
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(
@@ -178,22 +178,22 @@ class HelpCog:
                     toShow = memberIntelCommands
                 
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, toShow))
-                await ctx.send('{}, I sent you a DM witth intel command instructions').format(ctx.message.author.mention)
+                await ctx.send('{}, I sent you a DM witth intel command instructions'.format(ctx.message.author.mention))
 
             if type.lower() != 'resources' and isAdmin and type.lower() == 'setup':
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, adminSetupCommands))
-                await ctx.send('{}, I sent you a DM witth setup command instructions').format(ctx.message.author.mention)
+                await ctx.send('{}, I sent you a DM witth setup command instructions'.format(ctx.message.author.mention))
 
             if type.lower() != 'resources' and type.lower() == 'register':
                 toShow = genRegisterCommands
                 if isAdmin:
                     toShow = adminRegisterCommands + genRegisterCommands
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, toShow))
-                await ctx.send('{}, I sent you a DM witth register command instructions').format(ctx.message.author.mention)
+                await ctx.send('{}, I sent you a DM witth register command instructions'.format(ctx.message.author.mention))
 
             if type.lower() == 'resources':
                 await ctx.message.author.send('.\n{}\n\n{}\n\n{}'.format(title, intro, resourceCommands))
-                await ctx.send('{}, I sent you a DM witth resources command instructions').format(ctx.message.author.mention)
+                await ctx.send('{}, I sent you a DM witth resources command instructions'.format(ctx.message.author.mention))
 
         except:
             error = "**[ERROR] something went wrong... ...\n\n Have you run Setup before?\n if you have never run setup "
