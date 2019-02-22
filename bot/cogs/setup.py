@@ -16,7 +16,7 @@ from utils.functions import (
     getWarInfo
 )
 from utils.test_functions import setAllSetup
-from utils.data_database import saveSettings, saveGeneralInfo
+from utils.db import saveSettings, saveGeneralInfo
 from utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS, GITHUB
 
 

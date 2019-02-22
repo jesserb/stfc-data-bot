@@ -1,5 +1,6 @@
 import sys
-from utils.data_database import queryDatabase, resetAllianceDatabase, createAllianceTables
+from utils.data_database import resetAllianceDatabase, createAllianceTables
+from utils.db import queryDatabase
 from utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
 
 
@@ -11,12 +12,70 @@ from utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
 ###################################################################
 
 
+def getPlayerIntel(serverId, allianceId, player):
+    sql = '''
+        SELECT *
+        FROM PlayerIntelligence
+        WHERE ServerID={}
+        AND AllianceID="{}"
+        AND PlayerName="{}"
+    '''.format(serverId, allianceId, player)
+    res = queryDatabase(sql)
+    if len(res):
+        return res[0]
+    return []
+
+def getIntelPlayers(serverId):
+    sql = '''
+        SELECT *
+        FROM PlayerIntelligence
+        WHERE ServerID={}
+    '''.format(serverId)
+    res = queryDatabase(sql)
+    if len(res):
+        return res
+    return []   
+
+
+def getFormattedPlayersList(players):
+    resultStr = ''
+    for player in players:
+        print(player)
+
+        i = len(player[2]) if player[2] else 4
+        resultStr += '`{}'.format(player[2] if player[2] else '????')
+        while i < 4:
+            i += 1
+            resultStr += '.'
+        resultStr += '` '
+
+        i = len(player[3])
+        resultStr += '`{}'.format(player[3])
+        while i < 12:
+            i += 1
+            resultStr += '.'
+        resultStr += '` '
+
+
+        i = len(player[4]) if player[4] else 7
+        resultStr += '`{}'.format(player[4] if player[4] else 'Unknown')
+        while i < 10:
+            i += 1
+            resultStr += '.'
+        resultStr += '` '
+
+        strpDate = player[6].split('/')
+        strpDate = '{}/{}/{}'.format(strpDate[0], strpDate[1], strpDate[2][2:])
+        resultStr += '**{}**\n'.format(strpDate if strpDate else 'Unknown')
+    print(resultStr)
+    return resultStr
+
 
 def getROEViolations(serverId, query):
     sql = '''
         SELECT AllianceID, Violations, PlayerName
         FROM ROE
-        WHERE ServerId={}
+        WHERE ServerID={}
     '''.format(serverId)
 
     if query:

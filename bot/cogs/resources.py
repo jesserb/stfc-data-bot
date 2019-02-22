@@ -14,7 +14,7 @@ from utils.functions import (
     hasSTFCEmojis
 )
 import math as m
-from utils.data_database import saveResource
+from utils.db import saveResource
 
 
 class ResourcesCog:

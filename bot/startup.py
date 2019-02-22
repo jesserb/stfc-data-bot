@@ -36,8 +36,8 @@ config = {
         'prefix': (configs[2].split()[1]).split('\n')[0],
     },
     'DATAtestsim': {
-        'token': (configs[6].split()[1]).split('\n')[0],
-        'prefix': (configs[7].split()[1]).split('\n')[0],
+        'token': (configs[7].split()[1]).split('\n')[0],
+        'prefix': (configs[8].split()[1]).split('\n')[0],
     },
 }
 

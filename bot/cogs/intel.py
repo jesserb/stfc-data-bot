@@ -20,9 +20,12 @@ from utils.functions import (
     getROEViolations,
     getFormattedROEViolations,
     isAllianceMember,
-    getFieldIntel
+    getFieldIntel,
+    getPlayerIntel,
+    getIntelPlayers,
+    getFormattedPlayersList
 )
-from utils.data_database import saveIntellegence, saveROE, removeROE
+from utils.db import saveIntellegence, saveROE, removeROE, savePlayerIntelligence
 from utils.constants import GITHUB
 import math as m
 
@@ -92,7 +95,7 @@ class IntelCog:
         }
         intro = '[OPENING] Secure connection...\n'
         intro += '*Transmitting sensitive data.. ...*\n\n'
-        footerText = 'SECURE CONNECTION: true, CREDENTIALS CONFIRMED: true'
+        footerText = 'SECURE CONNECTION: true'
         info = ''
         spacer = '\n--------------------------------------------------\n'
 
@@ -164,8 +167,8 @@ class IntelCog:
                 )
             else:
                 msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
-                msg += 'When **intel** command with single argument is used, the argument must be **ROE**, **ALLIES**, **KOS**, '
-                msg += '**NAP**, **HOME** or **WARS**.\n*example: .intel WARS, .intel ALLIES*'
+                msg += 'When **intel** command with single argument is used, the argument must be **on player/players**, **ROE**, **ALLIES**, **KOS**, '
+                msg += '**NAP**, **HOME** or **WARS**.\nE.g `.intel WARS`, `.intel ALLIES`, `.intel on players`.'
                 await ctx.send(msg)
                 return
         
@@ -360,6 +363,161 @@ class IntelCog:
             saveIntellegence(serverId, args[2].upper(), allianceStandingDict)
             await ctx.send('{}, **{} entry {} Saved**.'.format(ctx.message.author.mention,args[0].upper(), args[2].upper()))  
             return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # shows a list of players for which intel exists
+        elif (args[0].lower() == 'on') and len(args) == 2 and args[1].lower() == 'players':
+            # function to check that reaction is from user who called this command
+            def checkUser(reaction, user):
+                return user == ctx.message.author
+            
+            # violations is paged, so we need some variables to help do that correctly
+            idx = 0
+            maxPage = 10
+            page = 1
+            numPages = 1
+            intro += ':exclamation: Use command ***.intel on player <playername>***\nto get info on specific player\n\n'
+            header = '`AID.` `Player......` `Location..` `Date`'
+            spacer = '\n-----------------------------------------------------\n'
+
+            # check to see if a specific player or alliance was mentioned, to add to the query
+            results = getIntelPlayers(serverId)
+            numPages = m.ceil(len(results) / maxPage)
+            pageEnd = maxPage if len(results) >= maxPage else len(results)
+
+
+            playerList = getFormattedPlayersList(results[idx:pageEnd])
+            embed = discord.Embed(title='**Intel Player List**', description=intro+header+spacer+playerList+spacer[1::], color=000000)
+            embed.set_author(name=title, icon_url=ctx.guild.icon_url)
+            embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
+            msg = await ctx.send(embed=embed)
+
+            try:
+                while True:
+                    playerList = getFormattedPlayersList(results[idx:pageEnd])
+                    embed = discord.Embed(title='**Intel Player List**', description=intro+header+spacer+playerList+spacer[1::], color=000000)
+                    embed.set_author(name=title, icon_url=ctx.guild.icon_url)
+                    embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
+                    await msg.edit(embed=embed)
+
+
+                    if page > 1:
+                        await msg.add_reaction(emoji=self.prev)
+                    if page * maxPage < len(results):
+                        await msg.add_reaction(emoji=self.next)
+
+                    reaction, user = await self.bot.wait_for('reaction_add', timeout=120.0, check=checkUser)
+
+                    # page the results forward, reset page number, page end, and the index
+                    if reaction.emoji == self.next:
+                        page += 1
+                        idx = pageEnd
+                        pageEnd = (page * maxPage) if len(results) >= (page * maxPage) else len(results)
+
+                    # page the results backwards, reset page number, page end, and the index
+                    if reaction.emoji == self.prev:
+                        page -= 1
+                        pageEnd = idx
+                        idx = pageEnd - maxPage
+
+                    # clear ALL reactions, reset state of interface.
+                    await msg.clear_reactions()
+                return
+
+            # UH OH TIMED OUT
+            except asyncio.TimeoutError:
+                embed = discord.Embed(title='**Intel Player List**', description=intro+header+spacer+roeList+spacer[1::], color=000000)
+                embed.set_author(name=title, icon_url=ctx.guild.icon_url)
+                embed.set_footer(text='CONNECTION CLOSED: Session timed out')
+                msg = await msg.edit(embed=embed)
+                await msg.clear_reactions()
+                return
+
+
+
+
+
+
+        elif (args[0].lower() == 'on') and (len(args) > 2):
+
+            # intel on specific player
+            if args[1].lower() == 'player':
+
+                playerDetails = getPlayerIntel(serverId, allianceId, args[2])
+
+                if not playerDetails and len(args) == 3:
+                    intro = ''
+                    info = '\n:warning: ***There is no information on {} at this time.***\n'.format(args[2])
+
+                # add player intel
+                elif len(args) == 6 and args[3].lower() == 'add':
+
+                    if args[4].lower() == 'location':
+                        savePlayerIntelligence(serverId, allianceId, args[2], location=args[5])
+
+                    elif args[4].lower() == 'alliance':
+                        savePlayerIntelligence(serverId, allianceId, args[2], playerAlliance=args[5])
+
+                    elif args[4].lower() == 'note':
+                        savePlayerIntelligence(serverId, allianceId, args[2], newNote=args[5])
+                    else:
+                        error = '{}, I did not understand that command. When using the **.intel on <player> add** '.format(ctx.message.author.mention)
+                        error += 'command sequence, the next argument must be **location**, **alliance** or **note**. Notes must be contained . '
+                        error += 'within quotes, e.g. "note" E.g. `.intel on player testLady add location testland`, '
+                        error += '`.intel on player testLady add alliance TEST`, .intel on player testLady add note "this is a note"`'
+                        await ctx.send(error)
+                        return 
+
+
+                # show player intel
+                elif len(args) == 3:
+
+                    # prep Notes
+                    notes = playerDetails[5].split(' **')
+                    noteMsg = ''
+                    for note in notes:
+                        if note == notes[0]:
+                            noteMsg += '{}\n'.format(note)
+                        else:
+                            noteMsg += '**{}\n'.format(note)
+
+                    info = '\nIntel Updated on **{}**\n\n'.format(playerDetails[6])
+                    info += '**× Player:** {}\n'.format(playerDetails[3])
+                    info += '**× Alliance:** {}\n'.format(playerDetails[2] if playerDetails[2] else 'Unknown')
+                    info += '**× Location:** {}\n\n'.format(playerDetails[4] if playerDetails[4] else 'Unknown')
+                    info += '**× Additional Entries:**\n{}'.format(noteMsg if noteMsg else 'No additiona information')
+                    embed = discord.Embed(title='Confidential Intel for {}\n'.format(allianceId), description=info, color=000000)
+                    embed.set_author(name=title, icon_url=ctx.guild.icon_url)
+                    embed.set_footer(text=footerText)
+                    await ctx.send(embed=embed)
+                    return
+
+                # error
+                else:
+                    await ctx.send('{}, I did not understand that command. Please try again.'.format(ctx.message.author.mention))
+                    return
+
+            else:
+                error = '{}, I did not understand that command. When using the **.intel on** '.format(ctx.message.author.mention)
+                error += 'command sequence, it must be followed by the word **player** or **players**. '
+                error += 'E.g. to see intel: `.intel on player testLady`, to add intel: `.intel on player testLady add location testland`'
+                await ctx.send(error)
+                return           
+                    
+                    
+
 
         else:
             msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
