@@ -408,7 +408,7 @@ class IntelCog:
                 while True:
                     playerList = getFormattedPlayersList(results[idx:pageEnd])
                     if not playerList:
-                        playerList = '**There is no player intel for this server at this time**'
+                        playerList = '**There is no player intel for this server at this time**\n'
                     embed = discord.Embed(title='**Intel Player List**', description=intro+header+spacer+playerList+spacer[1::], color=000000)
                     embed.set_author(name=title, icon_url=ctx.guild.icon_url)
                     embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
