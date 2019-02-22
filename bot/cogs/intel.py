@@ -468,12 +468,18 @@ class IntelCog:
 
                     if args[4].lower() == 'location':
                         savePlayerIntelligence(serverId, allianceId, args[2], location=args[5])
+                        await ctx.send('{}, Location intel on {} saved.'.format(ctx.message.author.mention, args[2]))
+                        return
 
                     elif args[4].lower() == 'alliance':
                         savePlayerIntelligence(serverId, allianceId, args[2], playerAlliance=args[5])
+                        await ctx.send('{}, alliance tag for {} saved.'.format(ctx.message.author.mention, args[2]))
+                        return
 
                     elif args[4].lower() == 'note':
                         savePlayerIntelligence(serverId, allianceId, args[2], newNote=args[5])
+                        await ctx.send('{}, Note on {} saved.'.format(ctx.message.author.mention, args[2]))
+                        return
                     else:
                         error = '{}, I did not understand that command. When using the **.intel on <player> add** '.format(ctx.message.author.mention)
                         error += 'command sequence, the next argument must be **location**, **alliance** or **note**. Notes must be contained . '
