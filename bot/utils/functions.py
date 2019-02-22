@@ -51,7 +51,7 @@ def getFormattedPlayersList(players):
 
         i = len(player[3])
         resultStr += '`{}'.format(player[3])
-        while i < 13:
+        while i < 16:
             i += 1
             resultStr += '.'
         resultStr += '` '

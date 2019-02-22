@@ -389,7 +389,7 @@ class IntelCog:
             page = 1
             numPages = 1
             intro += 'Use command ***.intel on player <playername>***\nto get info on specific player, such as location\n\n'
-            header = '`AID.` `Player......` `Date`'
+            header = '`AID.` `Player.........` `Date`'
             spacer = '\n------------------------------------------------\n'
 
             # check to see if a specific player or alliance was mentioned, to add to the query
