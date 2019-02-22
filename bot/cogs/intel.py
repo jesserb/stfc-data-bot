@@ -388,9 +388,9 @@ class IntelCog:
             maxPage = 10
             page = 1
             numPages = 1
-            intro += ':exclamation: Use command ***.intel on player <playername>***\nto get info on specific player\n\n'
-            header = '`AID.` `Player......` `Location..` `Date`'
-            spacer = '\n-----------------------------------------------------\n'
+            intro += 'Use command ***.intel on player <playername>***\nto get info on specific player, such as location\n\n'
+            header = '`AID.` `Player......` `Date`'
+            spacer = '\n------------------------------------------------\n'
 
             # check to see if a specific player or alliance was mentioned, to add to the query
             results = getIntelPlayers(serverId)
@@ -440,10 +440,10 @@ class IntelCog:
 
             # UH OH TIMED OUT
             except asyncio.TimeoutError:
-                embed = discord.Embed(title='**Intel Player List**', description=intro+header+spacer+roeList+spacer[1::], color=000000)
+                embed = discord.Embed(title='**Intel Player List**', description=intro+header+spacer+playerList+spacer[1::], color=000000)
                 embed.set_author(name=title, icon_url=ctx.guild.icon_url)
                 embed.set_footer(text='CONNECTION CLOSED: Session timed out')
-                msg = await msg.edit(embed=embed)
+                await msg.edit(embed=embed)
                 await msg.clear_reactions()
                 return
 
@@ -469,6 +469,12 @@ class IntelCog:
                     if args[4].lower() == 'location':
                         savePlayerIntelligence(serverId, allianceId, args[2], location=args[5])
                         await ctx.send('{}, Location intel on {} saved.'.format(ctx.message.author.mention, args[2]))
+                        return
+
+                    if args[4].lower() == 'coordinates':
+
+                        savePlayerIntelligence(serverId, allianceId, args[2], coords=args[5])
+                        await ctx.send('{}, coordinat intel on {} saved.'.format(ctx.message.author.mention, args[2]))
                         return
 
                     elif args[4].lower() == 'alliance':
@@ -501,10 +507,12 @@ class IntelCog:
                         else:
                             noteMsg += '**{}\n'.format(note)
 
+                    print(playerDetails)
                     info = '\nIntel Updated on **{}**\n\n'.format(playerDetails[6])
                     info += '**× Player:** {}\n'.format(playerDetails[3])
                     info += '**× Alliance:** {}\n'.format(playerDetails[2] if playerDetails[2] else 'Unknown')
-                    info += '**× Location:** {}\n\n'.format(playerDetails[4] if playerDetails[4] else 'Unknown')
+                    info += '**× Location:** {}\n'.format(playerDetails[4] if playerDetails[4] else 'Unknown')
+                    info += '**× Coordinates:** {}\n\n'.format(('\n'+playerDetails[7]) if playerDetails[7] else 'Unknown')
                     info += '**× Additional Entries:**\n{}'.format(noteMsg if noteMsg else 'No additiona information')
                     embed = discord.Embed(title='Confidential Intel for {}\n'.format(allianceId), description=info, color=000000)
                     embed.set_author(name=title, icon_url=ctx.guild.icon_url)

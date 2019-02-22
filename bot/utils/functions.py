@@ -38,9 +38,10 @@ def getIntelPlayers(serverId):
 
 
 def getFormattedPlayersList(players):
+    
     resultStr = ''
     for player in players:
-
+        print(player)
         i = len(player[2]) if player[2] else 4
         resultStr += '`{}'.format(player[2] if player[2] else '????')
         while i < 4:
@@ -50,18 +51,18 @@ def getFormattedPlayersList(players):
 
         i = len(player[3])
         resultStr += '`{}'.format(player[3])
-        while i < 12:
+        while i < 13:
             i += 1
             resultStr += '.'
         resultStr += '` '
 
 
-        i = len(player[4]) if player[4] else 7
-        resultStr += '`{}'.format(player[4] if player[4] else 'Unknown')
-        while i < 10:
-            i += 1
-            resultStr += '.'
-        resultStr += '` '
+        # i = len(player[4]) if player[4] else 7
+        # resultStr += '`{}'.format(player[4] if player[4] else 'Unknown')
+        # while i < 10:
+        #     i += 1
+        #     resultStr += '.'
+        # resultStr += '` '
 
         strpDate = player[6].split('/')
         strpDate = '{}/{}/{}'.format(strpDate[0], strpDate[1], strpDate[2][2:])
