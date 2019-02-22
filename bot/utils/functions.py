@@ -56,14 +56,6 @@ def getFormattedPlayersList(players):
             resultStr += '.'
         resultStr += '` '
 
-
-        # i = len(player[4]) if player[4] else 7
-        # resultStr += '`{}'.format(player[4] if player[4] else 'Unknown')
-        # while i < 10:
-        #     i += 1
-        #     resultStr += '.'
-        # resultStr += '` '
-
         strpDate = player[6].split('/')
         strpDate = '{}/{}/{}'.format(strpDate[0], strpDate[1], strpDate[2][2:])
         resultStr += '**{}**\n'.format(strpDate if strpDate else 'Unknown')
