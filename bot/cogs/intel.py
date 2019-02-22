@@ -507,7 +507,6 @@ class IntelCog:
                         else:
                             noteMsg += '**{}\n'.format(note)
 
-                    print(playerDetails)
                     info = '\nIntel Updated on **{}**\n\n'.format(playerDetails[6])
                     info += '**× Player:** {}\n'.format(playerDetails[3])
                     info += '**× Alliance:** {}\n'.format(playerDetails[2] if playerDetails[2] else 'Unknown')
