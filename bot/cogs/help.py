@@ -16,7 +16,7 @@ class HelpCog:
 
         title = '**DATA BOT INFORMATION**'
         info  = '*Created by **Bop#1308***\n\n'
-        info += '×  **version:** 1.0.0 **ALPHA**\n'
+        info += '×  **version:** 1.1.0 **BETA**\n'
         info += '×  **prefix:** "."\n'
         info += '×  **help command:** `.help`\n'
         info += '×  **github:** {}\n'.format(GITHUB)

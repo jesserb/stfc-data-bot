@@ -25,7 +25,7 @@ from utils.functions import (
     getIntelPlayers,
     getFormattedPlayersList
 )
-from utils.db import saveIntellegence, saveROE, removeROE, savePlayerIntelligence
+from utils.db import saveIntellegence, saveROE, removeROE, savePlayerIntelligence,removePlayerIntelligence
 from utils.constants import GITHUB
 import math as m
 
@@ -120,10 +120,10 @@ class IntelCog:
                 embed = discord.Embed(title='Confidential Intel for {}\n'.format(allianceId), description=intro, color=000000)
                 embed.set_author(name=title, icon_url=ctx.guild.icon_url)
                 embed.add_field(name='**{} Home System**'.format(allianceId), value=descDict["home"]+'\n**{}**'.format(spacer) if descDict["home"] else '*No home system*\n', inline=False)
-                embed.add_field(name='**Allies**', value=getFieldIntel(infoDict["aoa"], 5) if infoDict["aoa"] else '*No Allied Alliances*', inline=True)
-                embed.add_field(name='**NAPs**', value=getFieldIntel(infoDict["nap"], 5) if infoDict["nap"] else '*No NAPs*', inline=True)
-                embed.add_field(name='**KOS List**', value=getFieldIntel(infoDict["kos"], 2) if infoDict["kos"] else '*No KOS Alliances*', inline=True)
-                embed.add_field(name='**Decl. of War**', value=getFieldIntel(infoDict["war"], 5) if infoDict["war"] else '*No Ongoing Wars*', inline=True)
+                embed.add_field(name='**Allies**', value=getFieldIntel(infoDict["aoa"], 10) if infoDict["aoa"] else '*No Allied Alliances*', inline=True)
+                embed.add_field(name='**NAPs**', value=getFieldIntel(infoDict["nap"], 10) if infoDict["nap"] else '*No NAPs*', inline=True)
+                embed.add_field(name='**KOS List**', value=getFieldIntel(infoDict["kos"], 10) if infoDict["kos"] else '*No KOS Alliances*', inline=False)
+                embed.add_field(name='**Decl. of War**', value=getFieldIntel(infoDict["war"], 10) if infoDict["war"] else '*No Ongoing Wars*', inline=False)
                 embed.add_field(name=spacer, value='.', inline=False)
                 embed.set_footer(text=footerText)
                 await ctx.send(embed=embed)
@@ -383,16 +383,15 @@ class IntelCog:
             def checkUser(reaction, user):
                 return user == ctx.message.author
             
-            # violations is paged, so we need some variables to help do that correctly
+            # players intel is paged, so we need some variables to help do that correctly
             idx = 0
-            maxPage = 10
+            maxPage = 15
             page = 1
             numPages = 1
             intro += 'Use command ***.intel on player <playername>***\nto get info on specific player, such as location\n\n'
-            header = '`AID.` `Player.........` `Date`'
+            header = '`AID..` `Player............` `Date`'
             spacer = '\n------------------------------------------------\n'
 
-            # check to see if a specific player or alliance was mentioned, to add to the query
             results = getIntelPlayers(serverId)
             numPages = m.ceil(len(results) / maxPage)
             pageEnd = maxPage if len(results) >= maxPage else len(results)
@@ -463,6 +462,13 @@ class IntelCog:
                     intro = ''
                     info = '\n:warning: ***There is no information on {} at this time.***\n'.format(args[2])
 
+                # delete player intel
+                elif len(args) == 4 and args[3].lower() == 'delete':
+                    success = removePlayerIntelligence(serverId, args[2])
+                    if success:
+                        await ctx.send('{}, player intel on {} removed.'.format(ctx.message.author.mention, args[2]))
+                        return  
+
                 # add player intel
                 elif len(args) == 6 and args[3].lower() == 'add':
 
@@ -474,7 +480,7 @@ class IntelCog:
                     if args[4].lower() == 'coordinates':
 
                         savePlayerIntelligence(serverId, allianceId, args[2], coords=args[5])
-                        await ctx.send('{}, coordinat intel on {} saved.'.format(ctx.message.author.mention, args[2]))
+                        await ctx.send('{}, coordinates intel on {} saved.'.format(ctx.message.author.mention, args[2]))
                         return
 
                     elif args[4].lower() == 'alliance':

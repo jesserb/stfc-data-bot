@@ -17,9 +17,8 @@ def getPlayerIntel(serverId, allianceId, player):
         SELECT *
         FROM PlayerIntelligence
         WHERE ServerID={}
-        AND AllianceID="{}"
         AND PlayerName="{}"
-    '''.format(serverId, allianceId, player)
+    '''.format(serverId, player)
     res = queryDatabase(sql)
     if len(res):
         return res[0]
@@ -30,6 +29,7 @@ def getIntelPlayers(serverId):
         SELECT *
         FROM PlayerIntelligence
         WHERE ServerID={}
+        ORDER BY PlayerAlliance, LastUpdate DESC
     '''.format(serverId)
     res = queryDatabase(sql)
     if len(res):
@@ -41,17 +41,16 @@ def getFormattedPlayersList(players):
     
     resultStr = ''
     for player in players:
-        print(player)
         i = len(player[2]) if player[2] else 4
         resultStr += '`{}'.format(player[2] if player[2] else '????')
-        while i < 4:
+        while i < 5:
             i += 1
             resultStr += '.'
         resultStr += '` '
 
         i = len(player[3])
         resultStr += '`{}'.format(player[3])
-        while i < 16:
+        while i < 18:
             i += 1
             resultStr += '.'
         resultStr += '` '
