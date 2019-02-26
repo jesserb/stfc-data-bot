@@ -66,6 +66,8 @@ class IntelCog:
             return
 
         # ERROR CHECK -> Unless only one argument given, and it be ROE, must be a member to use this command
+        print(isAllyWithIntelPermission(ctx.guild.id, ctx.message.author.roles))
+        print(isAllianceMember(ctx.guild.id, ctx.message.author.roles))
         if not isAllianceMember(ctx.guild.id, ctx.message.author.roles) and not isAllyWithIntelPermission(ctx.guild.id, ctx.message.author.roles) and (len(args) != 1 or args[0].lower() != 'roe'):
     
             msg = '{}, For all intel commands other than **.intel ROE**, '.format(ctx.message.author.mention)

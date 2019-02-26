@@ -624,7 +624,7 @@ def isAllyWithIntelPermission(serverId, userRoles):
     sql = '''
         SELECT Role
         From AllianceRolePermissions
-        WHERE R.ServerID={}
+        WHERE ServerID={}
         AND AllyRole=1
         AND AmbassadorRole=0;
     '''.format(serverId)
