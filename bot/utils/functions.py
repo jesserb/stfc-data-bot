@@ -620,6 +620,22 @@ def isAllianceMember(serverId, userRoles):
             return True
     return False
 
+def isAllyWithIntelPermission(serverId, userRoles):
+    sql = '''
+        SELECT Role
+        From AllianceRolePermissions
+        WHERE R.ServerID={}
+        AND AllyRole=1
+        AND AmbassadorRole=0;
+    '''.format(serverId)
+    res = queryDatabase(sql) 
+    if len(res):
+        allyRole = res[0][0]
+        for role in userRoles:
+            if role.name.lower() == allyRole.lower():
+                return True
+    return False
+
 
 # serverId: id for current server, from discord guild object
 #    roles: list of discord role objects

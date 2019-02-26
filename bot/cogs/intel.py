@@ -24,7 +24,8 @@ from utils.functions import (
     getPlayerIntel,
     getIntelPlayers,
     getFormattedPlayersList,
-    getMasterAllianceId
+    getMasterAllianceId,
+    isAllyWithIntelPermission
 )
 from utils.db import saveIntellegence, saveROE, removeROE, savePlayerIntelligence,removePlayerIntelligence
 from utils.constants import GITHUB
@@ -65,7 +66,8 @@ class IntelCog:
             return
 
         # ERROR CHECK -> Unless only one argument given, and it be ROE, must be a member to use this command
-        if not isAllianceMember(ctx.guild.id, ctx.message.author.roles) and (len(args) != 1 or args[0].lower() != 'roe'):
+        if not isAllianceMember(ctx.guild.id, ctx.message.author.roles) and not isAllyWithIntelPermission(ctx.guild.id, ctx.message.author.roles) and (len(args) != 1 or args[0].lower() != 'roe'):
+    
             msg = '{}, For all intel commands other than **.intel ROE**, '.format(ctx.message.author.mention)
             msg += 'you must be a member to use on this server. '
             await ctx.send(msg)
