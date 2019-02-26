@@ -20,7 +20,8 @@ from utils.functions import (
     getAmbassadorCategory,
     getCategory,
     getChannel,
-    canAccessPrivateChannel
+    canAccessPrivateChannel,
+    getMasterAllianceId
 )
 
 
@@ -324,7 +325,7 @@ class RegistrationCog:
         if not isInAlliance(server.id, newUserAlliance):
             
             # new channel name should be a combination of both alliances abbreviations
-            channelName = '{}-{}'.format(allianceId.lower(), newUserAlliance.lower())
+            channelName = '{}-{}'.format(newUserAlliance.lower(), getMasterAllianceId(server.id))
 
             # check if channel exists. If so, just give user access to that channel
             if channelExists(server.channels, channelName):
