@@ -85,7 +85,7 @@ class AdministrationCog:
 
         title = 'DATA Bot Settings'
         footerText = '*DATA Bot Setup: url-to-code, bot-help-server*'
-        settings = getSettings(ctx.guild.id, allianceId.upper(), ctx.guild.roles, ctx.guild.categories) 
+        settings = getSettings(ctx.guild.id, ctx.guild.roles, ctx.guild.categories) 
         summary = '[DECRYPTING] sensitive data... ...\n\n'
         
         summary += getSetupSummary(
@@ -95,6 +95,7 @@ class AdministrationCog:
             allianceId.upper(),
             settings["manualRegister"],
             settings["createChannel"],
+            settings["allowAllyIntelAccess"],
             settings["channelCategory"],
             settings["memberRoles"],
             settings["ambassadorRoles"],

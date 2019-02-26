@@ -23,7 +23,8 @@ from utils.functions import (
     getFieldIntel,
     getPlayerIntel,
     getIntelPlayers,
-    getFormattedPlayersList
+    getFormattedPlayersList,
+    getMasterAllianceId
 )
 from utils.db import saveIntellegence, saveROE, removeROE, savePlayerIntelligence,removePlayerIntelligence
 from utils.constants import GITHUB
@@ -37,6 +38,12 @@ class IntelCog:
         self.next = '\N{BLACK RIGHTWARDS ARROW}'
         self.prev = '\N{LEFTWARDS BLACK ARROW}'
     
+    # INTEL CLASS COMMAND #
+    # the intel class command allows the user to add and view intel on the alliance
+    # and other players. It can be used to add/view alliance home system, allies, wars, kos
+    # list, and roe violations against the alliance. In addition, the command can be used
+    # to add/view intel on individual players such as their location, alliance, and gen player
+    # notes. Information is dated and can be updated.
     @commands.command()
     async def intel(self, ctx, *args):
 
@@ -67,19 +74,19 @@ class IntelCog:
 
         #variables
         serverId   = ctx.guild.id
-        allianceId = aIds[0]
+        allianceId = getMasterAllianceId(serverId)
         roles      = ctx.message.author.roles
-        isAdmin    = hasAdminPermission(serverId, allianceId, roles)
+        isAdmin    = hasAdminPermission(serverId, roles)
         if ctx.message.author.guild_permissions.administrator:
             isAdmin = True
         title      = getAllianceName(serverId)
         descDict = {
-            "roe": getRoeRules(serverId, allianceId),
-            "ally": getAlliesInfo(serverId, allianceId),
-            "nap": getNapInfo(serverId, allianceId),
-            "home": getHomeInfo(serverId, allianceId),
-            "kos": getKosInfo(serverId, allianceId),
-            "war": getWarInfo(serverId, allianceId)
+            "roe": getRoeRules(serverId),
+            "ally": getAlliesInfo(serverId),
+            "nap": getNapInfo(serverId),
+            "home": getHomeInfo(serverId),
+            "kos": getKosInfo(serverId),
+            "war": getWarInfo(serverId)
         }
         allianceStandingDict = {
             "ally": 0,
@@ -366,17 +373,6 @@ class IntelCog:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
         # shows a list of players for which intel exists
         elif (args[0].lower() == 'on') and len(args) == 2 and args[1].lower() == 'players':
             # function to check that reaction is from user who called this command
@@ -447,10 +443,8 @@ class IntelCog:
                 return
 
 
-
-
-
-
+        # logic for adding intel to a player. INTEL ON sequence can result in,
+        # adding/updating intel on a player, showing intel on a player
         elif (args[0].lower() == 'on') and (len(args) > 2):
 
             # intel on specific player
@@ -557,10 +551,3 @@ class IntelCog:
 # set the cog up
 def setup(bot):
     bot.add_cog(IntelCog(bot))
-
-
-
-
-
-
-

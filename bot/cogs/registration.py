@@ -58,7 +58,7 @@ class RegistrationCog:
         if member == None:
             # if the current user has roles for admin register command, they cannot use
             # command without parameter
-            if hasAdminPermission(ctx.guild.id, getAllianceIdFromNick(ctx.message.author.nick), ctx.message.author.roles):
+            if hasAdminPermission(ctx.guild.id, ctx.message.author.roles):
                 err =  '{}, **No parameters wih command register.**\n'.format(ctx.message.author.mention)
                 err += 'The register command without parameters can only be used by new members. To register '
                 err += 'another user, please include the members name, whether they are a member, ally, or ambassador, '
@@ -118,9 +118,9 @@ class RegistrationCog:
         allianceId         = getAllianceIdFromNick(author.nick)
         allianceName       = getAllianceName(ctx.guild.id)
         server             = ctx.guild                          # server the command was used on
-        memberRoles        = getMemberRoles(server.id, allianceId)
-        ambassadorRoles    = getAmbassadorRoles(server.id, allianceId)
-        allyRoles          = getAllyRoles(server.id, allianceId)
+        memberRoles        = getMemberRoles(server.id)
+        ambassadorRoles    = getAmbassadorRoles(server.id)
+        allyRoles          = getAllyRoles(server.id)
         ambassadorCategory = getAmbassadorCategory(server.id)
         channel            = ''                                 # placeholder for new channel name
 
@@ -150,7 +150,7 @@ class RegistrationCog:
 
         # CASE 1
         # Command is being used by an administrator. 
-        if ctx.message.author.guild_permissions.administrator or hasAdminPermission(server.id, allianceId, userRoles):
+        if ctx.message.author.guild_permissions.administrator or hasAdminPermission(server.id, userRoles):
 
             # if admin is user command for other user, a user must be provided
             if len(ctx.message.mentions) > 0:
@@ -233,7 +233,7 @@ class RegistrationCog:
 
                                 # set the roles, set the nickname, and finish
                                 if isInAlliance(server.id, id.upper()):
-                                    memberRoles = getMemberRoles(server.id, id)
+                                    memberRoles = getMemberRoles(server.id)
                                     for role in memberRoles:
                                         await newUser.add_roles(getRole(roles, role)) 
                                     await newUser.edit(nick='[{}] {}'.format(id.upper(), newUser.name))
@@ -262,9 +262,9 @@ class RegistrationCog:
                     elif ans.content.lower() == 'ambassador' or  ans.content.lower() == 'ally':
 
                         # get values for alliance Id, ambassador and ally roles
-                        allianceId = getAllianceIds(server.id)[0]
-                        ambassadorRoles = getAmbassadorRoles(server.id, allianceId)
-                        allyRoles       = getAllyRoles(server.id, allianceId) 
+                        allianceId      = getAllianceIds(server.id)[0]
+                        ambassadorRoles = getAmbassadorRoles(server.id)
+                        allyRoles       = getAllyRoles(server.id) 
 
                         # set user role based on DB ambassador role
                         if ans.content.lower() == 'ambassador':
@@ -343,7 +343,7 @@ class RegistrationCog:
             # loop through all server roles. If role according to settings should be allowed to
             # enter channel, give them permissions to do so.
             for role in roles:
-                if canAccessPrivateChannel(server.id, allianceId, role):
+                if canAccessPrivateChannel(server.id, role):
                     await channel.set_permissions(role, overwrite=show)
 
             # finally, give the new user permission to see channel
@@ -356,10 +356,3 @@ class RegistrationCog:
 # set the cog up
 def setup(bot):
     bot.add_cog(RegistrationCog(bot))
-
-
-
-
-
-
-
