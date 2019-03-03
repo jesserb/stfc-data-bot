@@ -1,0 +1,125 @@
+gas
+Elona (13) - Neutral - G2 Updated: 16-12-2018
+Zaurak (13) - Neutral - G2 Updated: 30-12-2018
+Cita Laga (15) - Neutral - G2 Updated: 18-01-2019
+Vindemiatrix (15) - Neutral - G2 Updated: 23-01-2019
+Midnight (19) - Neutral - G2 Updated: 17-01-2019
+Voss (20) - Federation - G3 Updated: 01-02-2019
+Sorenle (21) - Neutral - G2 Updated: 17-01-2019
+Priya (22) - Federation - G3 Updated: 17-01-2019
+Earorfilad (24) - Federation - G3 Updated: 09-01-2019
+Angosia (25) - Federation - G3 Updated: 22-02-2019
+Doska (27) - Federation - G3 Updated: 27-01-2019
+Niawillen (28) - Neutral - G3 Updated: 23-12-2018
+P'Jem (29) - Federation - G3 Updated: 24-01-2019
+Afritalis (30) - Neutral - G3 Updated: 17-01-2019
+Thama (32) - Federation - G3 Updated: 03-02-2019
+Aiti (33) - Federation - G3 Updated: 19-02-2019
+Tau Ceti (34) - Federation - G3 Updated: 09-01-2019
+Siiolux (35) - Federation - G3 Updated: 15-02-2019
+Fellebia (40) - Federation - G3 Updated: 13-02-2019
+Groombridge 34 (40) - Federation - G3 Updated: 09-01-2019
+Nekosa (40) - Neutral - G3 Updated: 23-12-2018
+Riktor (40) - Federation - G3 Updated: 09-01-2019
+Romii (40) - Romulan - G3 Updated: 02-02-2019
+Archanis (42) - Klingon - G2 Updated: 25-12-2018
+Lakeside (45) - Federation - G3 Updated: 09-01-2019
+Qian Niu Xing (48) - Federation - G4 Updated: 09-01-2019
+ore
+Dhi'ban (13) - Neutral - G2 Updated: 30-12-2018
+Deneva (15) - Neutral - G2 Updated: 18-01-2019
+Labac (17) - Neutral - G2 Updated: 18-12-2018
+Obilent (17) - Neutral - G2 Updated: 23-01-2019
+Davidul (20) - Romulan - G3 Updated: 19-01-2019
+Kepler-018 (20) - Neutral - G2 Updated: 03-02-2019
+Fastolf (21) - Neutral - G2 Updated: 19-01-2019
+Sorenle (21) - Neutral - G2 Updated: 17-01-2019
+Huebr (24) - Romulan - G3 Updated: 21-02-2019
+Zova Rhen (25) - Romulan - G3 Updated: 22-02-2019
+Vendus A (27) - Romulan - G3 Updated: 24-01-2019
+Niawillen (28) - Neutral - G3 Updated: 23-12-2018
+Willenia (28) - Neutral - G3 Updated: 22-12-2018
+Rator (29) - Romulan - G3 Updated: 08-01-2019
+Kaisu (33) - Romulan - G3 Updated: 17-01-2019
+Aerimea (35) - Romulan - G3 Updated: 02-02-2019
+Argentomea (35) - Romulan - G3 Updated: 01-03-2019
+Eden (40) - Romulan - G3 Updated: 02-02-2019
+Nekosa (40) - Neutral - G3 Updated: 23-12-2018
+Nibiq (40) - Neutral - G3 Updated: 02-02-2019
+Stagnimea (40) - Romulan - G3 Updated: 02-02-2019
+B'Moth (41) - Klingon - G2 Updated: 02-01-2019
+Archanis (42) - Klingon - G2 Updated: 25-12-2018
+Ferraria (45) - Romulan - G3 Updated: 02-02-2019
+Arnab (48) - Romulan - G4 Updated: 02-02-2019
+crystal
+Bellas (12) - Neutral - G2 Updated: 16-12-2018
+Nelve (12) - Neutral - G2 Updated: 30-12-2018
+Astrida (14) - Neutral - G2 Updated: 19-01-2019
+Lycia (14) - Neutral - G2 Updated: 19-01-2019
+Amador (19) - Neutral - G2 Updated: 17-01-2019
+Azha (20) - Neutral - G2 Updated: 31-01-2019
+Francihk (20) - Klingon - G3 Updated: 21-02-2019
+Fastolf (21) - Neutral - G2 Updated: 19-01-2019
+K'amia (24) - Klingon - G3 Updated: 21-02-2019
+Etaoin (25) - Klingon - G3 Updated: 21-02-2019
+Maranga (25) - Neutral - G3 Updated: 22-02-2019
+Enthra (27) - Klingon - G3 Updated: 01-02-2019
+Willenia (28) - Neutral - G3 Updated: 22-12-2018
+Morska (29) - Klingon - G3 Updated: 08-01-2019
+Tejat (30) - Neutral - G3 Updated: 17-01-2019
+Pekka (33) - Klingon - G3 Updated: 18-02-2019
+Lixar (35) - Klingon - G2 Updated: 02-02-2019
+Nibiq (40) - Neutral - G3 Updated: 02-02-2019
+Ursva (40) - Klingon - G3 Updated: 02-02-2019
+Ganalda (41) - Klingon - G3 Updated: 02-02-2019
+Katovug (41) - Klingon - G3 Updated: 02-01-2019
+Archanis (42) - Klingon - G2 Updated: 25-12-2018
+Lankal (42) - Klingon - G3 Updated: 02-02-2019
+Sud'Day JoH (48) - Neutral - G4 Updated: 02-02-2019
+Ty'Gokor (50) - Klingon - G3 Updated: 02-01-2019
+dilithium
+Murasaki 312 (10) - Neutral Updated: 01-02-2019
+Clytomenes (12) - Neutral Updated: 16-12-2018
+Deneva (15) - Neutral Updated: 18-01-2019
+Coridan (16) - Neutral Updated: 22-02-2019
+Kaikara (18) - Neutral Updated: 01-02-2019
+Krah'Hor (18) - Neutral Updated: 01-02-2019
+Lorillia (18) - Neutral Updated: 21-02-2019
+Amador (19) - Neutral Updated: 17-01-2019
+Midnight (19) - Neutral Updated: 17-01-2019
+Draken (23) - Romulan Updated: 21-02-2019
+Earorfilad (24) - Federation Updated: 09-01-2019
+Huebr (24) - Romulan Updated: 21-02-2019
+K'amia (24) - Klingon Updated: 21-02-2019
+Doska (27) - Federation Updated: 27-01-2019
+Enthra (27) - Klingon Updated: 01-02-2019
+Vendus A (27) - Romulan Updated: 24-01-2019
+Izanagi (32) - Romulan Updated: 23-12-2018
+Nelvana (32) - Romulan Updated: 15-01-2019
+Beta Penthe (34) - Klingon Updated: 02-01-2019
+Tellar (37) - Federation Updated: 02-02-2019
+Altanea (38) - Romulan Updated: 23-12-2018
+Qu'Vat (38) - Klingon Updated: 31-01-2019
+Terix (38) - Romulan Updated: 23-12-2018
+Archer (40) - Federation Updated: 09-01-2019
+Babel (40) - Federation Updated: 02-02-2019
+Barnard's Star (40) - Federation Updated: 02-02-2019
+Cor Caroli (40) - Federation Updated: 15-01-2019
+D'Deridex (40) - Romulan Updated: 01-02-2019
+Fellebia (40) - Federation Updated: 13-02-2019
+Groombridge 34 (40) - Federation Updated: 09-01-2019
+Romii (40) - Romulan Updated: 02-02-2019
+Ursva (40) - Klingon Updated: 02-02-2019
+Wlb'puq (40) - Klingon Updated: 02-01-2019
+Ganalda (41) - Klingon Updated: 02-02-2019
+Yoruba (41) - Neutral Updated: 13-01-2019
+Chaltok (42) - Romulan Updated: 02-02-2019
+Devoras (42) - Romulan Updated: 02-02-2019
+Belak (43) - Romulan Updated: 02-02-2019
+Caerulum (43) - Romulan Updated: 02-02-2019
+Boraka (44) - Neutral Updated: 25-12-2018
+Arnab (48) - Romulan Updated: 02-02-2019
+Qian Niu Xing (48) - Federation Updated: 09-01-2019
+Sud'Day JoH (48) - Neutral Updated: 02-02-2019
+Ty'Gokor (50) - Klingon Updated: 02-01-2019
+Kurlemann (54) - Neutral Updated: 02-02-2019
