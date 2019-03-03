@@ -16,7 +16,6 @@ from utils.functions import (
     getWarInfo,
     getMasterAllianceId
 )
-from utils.test_functions import setAllSetup
 from utils.db import saveSettings, saveGeneralInfo, saveAlliance, setNewMaster
 from utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS, GITHUB
 
