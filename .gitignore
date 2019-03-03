@@ -5,6 +5,7 @@ __pycache__
 /bot/utils/db.py
 /bot/utils/test_functions.py
 /bot/utils/update_resources.py
+/bot/utils/resources.txt
 .vscode/
 bot/.vscode/
 stfc_bot_data.pem
