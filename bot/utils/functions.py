@@ -1,6 +1,8 @@
 import sys
+import datetime
+from datetime import timedelta
 from utils.data_database import resetAllianceDatabase, createAllianceTables
-from utils.db import queryDatabase
+from utils.db import queryDatabase, removeROE
 from utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS
 
 
@@ -60,8 +62,29 @@ def getFormattedPlayersList(players):
         resultStr += '**{}**\n'.format(strpDate if strpDate else 'Unknown')
     return resultStr
 
+def cleanROEviolations(serverId, query):
+    now = datetime.datetime.now()
+    sql = '''
+        SELECT LastUpdated, AllianceID, PlayerName
+        FROM ROE
+        WHERE ServerID={}
+    '''.format(serverId) 
+
+    results = queryDatabase(sql)
+    for r in results:
+        dateObj = datetime.datetime.strptime('{} {}'.format(r[0], '12:00:00.0'), '%Y-%m-%d %H:%M:%S.%f')
+        diff = now - dateObj
+
+        if diff.days > 14:
+            removeROE(serverId, r[1], r[2])
+
+
+
+
+
 
 def getROEViolations(serverId, query):
+    cleanROEviolations(serverId, query)
     sql = '''
         SELECT AllianceID, Violations, PlayerName
         FROM ROE

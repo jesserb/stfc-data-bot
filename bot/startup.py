@@ -9,7 +9,8 @@ initial_extensions = [
     'cogs.administration',
     'cogs.help',
     'cogs.resources',
-    'cogs.intel'
+    'cogs.intel',
+    'cogs.test_cog'
     ]
 
 
