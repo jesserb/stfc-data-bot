@@ -136,12 +136,44 @@ def getAllies(serverId):
     return ''
 
 
-def getKos(serverId):
+def getPlayerKos(serverId):
     sql = '''
         SELECT AllianceID
         FROM AllianceIntelligence
         WHERE ServerID={}
-        AND KOS=1
+        AND PlayerKos=1
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        reduced = reduceResults(resp)
+        strResult = ''
+        for r in reduced:
+            strResult += '{}, '.format(r) 
+        return strResult
+    return ''
+
+def getGalacticKos(serverId):
+    sql = '''
+        SELECT AllianceID
+        FROM AllianceIntelligence
+        WHERE ServerID={}
+        AND GalacticKos=1
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        reduced = reduceResults(resp)
+        strResult = ''
+        for r in reduced:
+            strResult += '{}, '.format(r) 
+        return strResult
+    return ''
+
+def getAllianceKos(serverId):
+    sql = '''
+        SELECT AllianceID
+        FROM AllianceIntelligence
+        WHERE ServerID={}
+        AND AllianceKos=1
     '''.format(serverId)
     resp = queryDatabase(sql)
     if len(resp):

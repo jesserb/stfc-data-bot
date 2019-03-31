@@ -9,3 +9,4 @@ __pycache__
 .vscode/
 bot/.vscode/
 stfc_bot_data.pem
+/bot/cogs/test_cog.py
