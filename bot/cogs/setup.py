@@ -233,13 +233,12 @@ class SetupCog:
             
         # setup some data, get server roles, and set roleSelection variables to false by default
         for r in ctx.guild.roles:
-            if r.name != 'DATA':
-                roles.append(r)
-                memberRoles.append({'role': r, 'selected': False})
-                ambassadorRoles.append({'role': r, 'selected': False})
-                allyRoles.append({'role': r, 'selected': False})
-                registerCommandRoleSelection.append({'role': r, 'selected': False})
-                privateChannelRoleSelection.append({'role': r, 'selected': False})
+            roles.append(r)
+            memberRoles.append({'role': r, 'selected': False})
+            ambassadorRoles.append({'role': r, 'selected': False})
+            allyRoles.append({'role': r, 'selected': False})
+            registerCommandRoleSelection.append({'role': r, 'selected': False})
+            privateChannelRoleSelection.append({'role': r, 'selected': False})
 
 
         # the following 2 functions are used 
