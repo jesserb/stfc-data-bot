@@ -143,17 +143,17 @@ class SetupCog:
         await ctx.send(msg)
 
         msg = ''
-        if args[0] == 'roe':
+        if args[0].lower() == 'roe':
             msg += 'Hello {}.\n Please write out a brief discription of the ROE guidelines.'.format(user.mention)
-        if args[0] == 'ally':
+        if args[0].lower() == 'ally':
             msg += 'Hello {}.\n Please write out a brief discription of how your alliance is to treat allies.'.format(user.mention)
-        if args[0] == 'nap':
+        if args[0].lower() == 'nap':
             msg += 'Hello {}.\n Please write out a brief discription of how your alliance is to treat alliances in an NAP agreement'.format(user.mention)
-        if args[0] == 'home':
+        if args[0].lower() == 'home':
             msg += 'Hello {}.\n Please write out a brief discription, describing your home system, and anything your members should know about it.'.format(user.mention)
-        if args[0] == 'kos':
+        if args[0].lower() == 'kos':
             msg += 'Hello {}.\n Please write out a brief discription, describing how your alliance is to treat KOS Alliances.'.format(user.mention)
-        if args[0] == 'war':
+        if args[0].lower() == 'war':
             msg += 'Hello {}.\n Please write out a brief discription, describing how your alliance is to treat waring alliances.'.format(user.mention)
         dm = await user.send(msg)
 

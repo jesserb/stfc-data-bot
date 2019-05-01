@@ -402,7 +402,7 @@ class IntelCog:
                         else:
                             allianceStandingDict["galacticKos"] = 1
                     print(allianceStandingDict)
-                    saveIntellegence(serverId, args[3].upper(), allianceStandingDict)
+                    saveIntellegence(serverId, args[3], allianceStandingDict)
                     await ctx.send('{}, **{} entry {} {} Saved**.'.format(ctx.message.author.mention,args[0].upper(), args[2].upper(), args[3].upper()))  
                     return
 
