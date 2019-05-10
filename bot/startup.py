@@ -10,7 +10,8 @@ initial_extensions = [
     'cogs.help',
     'cogs.resources',
     'cogs.intel',
-    'cogs.test_cog'
+    'cogs.test_cog',
+    'cogs.war'
     ]
 
 
@@ -71,3 +72,11 @@ async def on_ready():
 
 # Start your engines~~
 bot.run(config[botType]['token'], bot=True, reconnect=True)
+
+@bot.event
+# special for ACE server
+async def on_message(message):
+    print(message.channel.name.lower())
+    if message.channel.name.lower() == 'hit-list':
+        channel = message.channel
+        await channel.send('We see it all good!')

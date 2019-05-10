@@ -39,6 +39,59 @@ def getIntelPlayers(serverId):
     return []   
 
 
+
+def getMemberKillCounts(serverId, alliance):
+    sql = '''
+        SELECT AllianceID, PlayerName, KillCount
+        FROM AllianceMember
+        WHERE ServerID={}
+        ORDER BY KillCount desc
+    '''.format(serverId)
+
+    if alliance:
+        sql += 'AND AllianceID="{}"'.format(alliance)
+    resp = queryDatabase(sql)
+
+    if not len(resp):
+        return ['**No Player Kill Counts']
+    return resp
+    
+
+def getFormattedMemberKillCounts(playerKills):
+
+    resultStr = ''
+    for player in playerKills:
+        i = len(player[0])
+        resultStr += '`{}'.format(player[0])
+        while i < 5:
+            i += 1
+            resultStr += '.'
+        resultStr += '` '
+
+        i = len(player[1])
+        resultStr += '`{}'.format(player[1])
+        while i < 18:
+            i += 1
+            resultStr += '.'
+        resultStr += '` '
+        resultStr += '`{}`\n'.format(player[2])
+
+    return resultStr
+
+
+
+def getKillCount(playerId):
+    sql = '''
+        SELECT KillCount
+        FROM AllianceMember
+        WHERE PlayerID="{}"
+    '''.format(playerId)
+    res = queryDatabase(sql)
+
+    return res[0][0]
+
+
+
 def getFormattedPlayersList(players):
     
     resultStr = ''
