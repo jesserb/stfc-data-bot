@@ -21,7 +21,7 @@ class WarCog:
 
     async def on_message(self, message):
 
-        if message.channel.name.lower() == 'kill-shots' and not message.author.bot and message.attachments:
+        if message.channel.name.lower() == 'hivemind-admin' and not message.author.bot and message.attachments:
 
             allianceId = ''
             name = ''
@@ -31,9 +31,9 @@ class WarCog:
             except:
                 allianceId = message.author.name.split(']')[0][1::]
                 try:
-                    name = name.split(' ')[1]
+                    name = message.author.name.split(' ')[1]
                 except:
-                    name = name.split(']')[1]
+                    name = message.author.name.split(']')[1]
 
             incrementMemberKillCount(message.guild.id, message.author.id, name, allianceId)
             killCount = getKillCount(message.author.id)
@@ -61,9 +61,9 @@ class WarCog:
             except:
                 allianceId = member.name.split(']')[0][1::]
                 try:
-                    name = name.split(' ')[1]
+                    name = member.name.split(' ')[1]
                 except:
-                    name = name.split(']')[1]
+                    name = member.name.split(']')[1]
 
             incrementMemberKillCount(ctx.guild.id, member.id, name, allianceId)
             killCount = getKillCount(member.id)
