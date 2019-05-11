@@ -24,9 +24,10 @@ class WarCog:
         if message.channel.name.lower() == 'kill-shots' and not message.author.bot and message.attachments:
 
             allianceId = ''
-            name = message.author.name
+            name = ''
             try: 
                 allianceId = message.author.nick.split(']')[0][1::]
+                name = message.author.nick.split(' ')[1]
             except:
                 allianceId = message.author.name.split(']')[0][1::]
                 try:
@@ -53,9 +54,10 @@ class WarCog:
             member = ctx.message.mentions[0]
 
             allianceId = ''
-            name = member.name
+            name = ''
             try: 
                 allianceId = member.nick.split(']')[0][1::]
+                name = member.nick.split(' ')[1]
             except:
                 allianceId = member.name.split(']')[0][1::]
                 try:
