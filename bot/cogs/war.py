@@ -22,7 +22,11 @@ class WarCog:
     async def on_message(self, message):
 
         if message.channel.name.lower() == 'kill-shots' and not message.author.bot and message.attachments:
-            allianceId = message.author.nick.split(']')[0][1::]
+            allianceId = ''
+            try: 
+                allianceId = message.author.nick.split(']')[0][1::]
+            except:
+                allianceId = message.author.name.split(']')[0][1::]
             incrementMemberKillCount(message.guild.id, message.author.id, message.author.name, allianceId)
             killCount = getKillCount(message.author.id)
             msg = '.\n{}, your **kill** has been recorded :smiling_imp:'.format(message.author.mention)

@@ -384,19 +384,16 @@ class IntelCog:
                 # if kos addition, and argument length is greater than 3
                 if len(args) > 3:
                     if args[2].lower() == 'player':
-                        print('player hit')
                         if args[1].lower() == 'remove':
                             allianceStandingDict["playerKos"] = 0
                         else:
                             allianceStandingDict["playerKos"] = 1
                     if args[2].lower() == 'alliance':
-                        print('alliance hit')
                         if args[1].lower() == 'remove':
                             allianceStandingDict["allianceKos"] = 0
                         else:
                             allianceStandingDict["allianceKos"] = 1
                     if args[2].lower() == 'galactic':
-                        print('galactic hit')
                         if args[1].lower() == 'remove':
                             allianceStandingDict["galacticKos"] = 0
                         else:

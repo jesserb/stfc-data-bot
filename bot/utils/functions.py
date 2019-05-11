@@ -88,7 +88,9 @@ def getKillCount(playerId):
     '''.format(playerId)
     res = queryDatabase(sql)
 
-    return res[0][0]
+    if len(res):
+        return res[0][0]
+    return 'No Information Yet!'
 
 
 
