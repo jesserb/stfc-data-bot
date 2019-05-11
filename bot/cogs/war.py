@@ -22,12 +22,19 @@ class WarCog:
     async def on_message(self, message):
 
         if message.channel.name.lower() == 'kill-shots' and not message.author.bot and message.attachments:
+
             allianceId = ''
+            name = message.author.name
             try: 
                 allianceId = message.author.nick.split(']')[0][1::]
             except:
                 allianceId = message.author.name.split(']')[0][1::]
-            incrementMemberKillCount(message.guild.id, message.author.id, message.author.name, allianceId)
+                try:
+                    name = name.split(' ')[1]
+                except:
+                    name = name.split(']')[1]
+
+            incrementMemberKillCount(message.guild.id, message.author.id, name, allianceId)
             killCount = getKillCount(message.author.id)
             msg = '.\n{}, your **kill** has been recorded :smiling_imp:'.format(message.author.mention)
             msg += '\n```Kill Count: {}```'.format(killCount)
@@ -38,7 +45,36 @@ class WarCog:
 
 
     @commands.command()
+    async def warpointoverride(self, ctx):
+        if ctx.message.author.name.lower() != 'bop':
+            return
+
+        if len(ctx.message.mentions) > 0:
+            member = ctx.message.mentions[0]
+
+            allianceId = ''
+            name = member.name
+            try: 
+                allianceId = member.nick.split(']')[0][1::]
+            except:
+                allianceId = member.name.split(']')[0][1::]
+                try:
+                    name = name.split(' ')[1]
+                except:
+                    name = name.split(']')[1]
+
+            incrementMemberKillCount(ctx.guild.id, member.id, name, allianceId)
+            killCount = getKillCount(member.id)
+            msg = ".\n{}, {}'s **kill** has been recorded :smiling_imp:".format(ctx.message.author.mention, member.name)
+            msg += '\n```{} Kill Count: {}```'.format(member.name, killCount)
+            await ctx.message.channel.send(msg)
+
+
+    @commands.command()
     async def mywarpoints(self, ctx):
+        if ctx.guild.id != 524400503967187011:
+            return
+
         killCount = getKillCount(ctx.message.author.id)
         msg = '.\n{}, your **kill** count is below :smiling_imp:'.format(ctx.message.author.mention)
         msg += '\n```Kill Count: {}```'.format(killCount)
@@ -47,6 +83,9 @@ class WarCog:
 
     @commands.command()
     async def warpoints(self, ctx, allianceId=''):
+
+        if ctx.guild.id != 524400503967187011:
+            return
     
         title = getAllianceName(ctx.guild.id)
         spacer = '\n--------------------------------------------------\n'
