@@ -21,7 +21,7 @@ class WarCog:
 
     async def on_message(self, message):
 
-        if message.channel.name.lower() == 'kill=shots' and not message.author.bot and message.attachments:
+        if message.channel.name.lower() == 'kill-shots' and not message.author.bot and message.attachments:
 
             allianceId = ''
             name = ''
