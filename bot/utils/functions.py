@@ -38,6 +38,26 @@ def getIntelPlayers(serverId):
         return res
     return []   
 
+def getWarPointsChannel(serverId):
+    sql = '''
+        SELECT WarPointsChannel
+        FROM Server
+        WHERE ServerID={}
+    '''.format(serverId)
+    res = queryDatabase(sql)
+    if len(res):
+        return res[0][0]
+    return ''
+
+
+
+    sql += ' ORDER BY KillCount desc'
+
+    resp = queryDatabase(sql)
+
+    if not len(resp):
+        return ['**No Player Kill Counts']
+    return resp
 
 
 def getMemberKillCounts(serverId, alliance):
@@ -45,11 +65,13 @@ def getMemberKillCounts(serverId, alliance):
         SELECT AllianceID, PlayerName, KillCount
         FROM AllianceMember
         WHERE ServerID={}
-        ORDER BY KillCount desc
     '''.format(serverId)
 
     if alliance:
-        sql += 'AND AllianceID="{}"'.format(alliance)
+        sql += ' AND AllianceID="{}"'.format(alliance)
+
+    sql += ' ORDER BY KillCount desc'
+
     resp = queryDatabase(sql)
 
     if not len(resp):

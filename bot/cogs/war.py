@@ -5,9 +5,10 @@ from utils.functions import (
     getMemberKillCounts,
     getFormattedMemberKillCounts,
     getAllianceName,
-    getKillCount
+    getKillCount,
+    getWarPointsChannel
 )
-from utils.db import incrementMemberKillCount
+from utils.db import incrementMemberKillCount, setWarPointsChannel
 import math as m
 
 
@@ -21,7 +22,8 @@ class WarCog:
 
     async def on_message(self, message):
 
-        if message.channel.name.lower() == 'kill-shots' and not message.author.bot and message.attachments:
+        channel = getWarPointsChannel(message.guild.id)
+        if message.channel.name == channel and not message.author.bot and message.attachments:
 
             allianceId = ''
             name = ''
@@ -86,9 +88,13 @@ class WarCog:
     @commands.command()
     async def warpoints(self, ctx, allianceId=''):
 
-        if ctx.guild.id != 524400503967187011:
+        if allianceId.lower() == 'begin':
+            setWarPointsChannel(ctx.guild.id, ctx.channel.name)
+            msg = '.\n{}, This channel **({})** has been set up for warpoints.'.format(ctx.message.author.mention, ctx.channel.name)
+            msg += '\n`**Screenshots of kills will now be recorded here** :smiling_imp:'
+            await ctx.message.channel.send(msg)
             return
-    
+
         title = getAllianceName(ctx.guild.id)
         spacer = '\n--------------------------------------------------\n'
 
@@ -160,12 +166,6 @@ class WarCog:
             msg = await msg.edit(embed=embed)
             await msg.clear_reactions()
             return
-
-
-
-
-
-
 
 
 
