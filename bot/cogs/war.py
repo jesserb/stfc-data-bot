@@ -27,15 +27,71 @@ class WarCog:
 
             allianceId = ''
             name = ''
-            try: 
+            test = ''
+            try: #[] RULE
+                print('lvl 1')
+                # first assume nickname with [TAG] name
+                test = allianceId = message.author.nick.split(']')[1]
                 allianceId = message.author.nick.split(']')[0][1::]
                 name = message.author.nick.split(' ')[1]
             except:
-                allianceId = message.author.name.split(']')[0][1::]
                 try:
+                    print('lvl 2')
+                    # If failed assume name with [TAG] name
+                    test = allianceId = message.author.name.split(']')[1]
+                    allianceId = message.author.name.split(']')[0][1::]
                     name = message.author.name.split(' ')[1]
                 except:
-                    name = message.author.name.split(']')[1]
+                    try:
+                        print('lvl 3')
+                        # If failed assume name with [TAG]name
+                        test = allianceId = message.author.name.split(']')[1]
+                        allianceId = message.author.name.split(']')[0][1::]
+                        name = message.author.name.split(']')[1]
+                    except:
+                        try: #() RULE
+                            print('lvl 4')
+                            # first assume nickname with (TAG) name
+                            test = allianceId = message.author.nick.split(')')[1]
+                            allianceId = message.author.nick.split(')')[0][1::]
+                            name = message.author.nick.split(' ')[1]
+                        except:
+                            try:
+                                print('lvl 5')
+                                # If failed assume name with (TAG) name
+                                test = allianceId = message.author.name.split(')')[1]
+                                allianceId = message.author.name.split(')')[0][1::]
+                                name = message.author.name.split(' ')[1]
+                            except:
+                                try:
+                                    print('lvl 6')
+                                    # If failed assume name with (TAG)name
+                                    test = allianceId = message.author.name.split(')')[1]
+                                    allianceId = message.author.name.split(')')[0][1::]
+                                    name = message.author.name.split(')')[1]
+                                except:
+                                    try: #< RULE
+                                        print('lvl 7')
+                                        # first assume nickname with <TAG> name
+                                        test = allianceId = message.author.nick.split('>')[1]
+                                        allianceId = message.author.nick.split('>')[0][1::]
+                                        name = message.author.nick.split(' ')[1]
+                                    except:
+                                        try:
+                                            print('lvl 8')
+                                            # If failed assume name with <TAG> name
+                                            test = allianceId = message.author.name.split('>')[1]
+                                            allianceId = message.author.name.split('>')[0][1::]
+                                            name = message.author.name.split(' ')[1]
+                                        except:
+                                            print('lvl 9')
+                                            # If failed assume name with <TAG>name
+                                            test = allianceId = message.author.name.split('>')[1]
+                                            allianceId = message.author.name.split('>')[0][1::]
+                                            name = message.author.name.split('>')[1]
+
+
+
 
             incrementMemberKillCount(message.guild.id, message.author.id, name, allianceId)
             killCount = getKillCount(message.author.id)
