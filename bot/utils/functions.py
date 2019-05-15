@@ -60,6 +60,18 @@ def getWarPointsChannel(serverId):
     return resp
 
 
+def getTotalKillCounts(serverId):
+    sql = '''
+        SELECT SUM(KillCount)
+        FROM AllianceMember
+        WHERE ServerID={}
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        return  resp[0][0]
+    return 0
+
+
 def getMemberKillCounts(serverId, alliance):
     sql = '''
         SELECT AllianceID, PlayerName, KillCount

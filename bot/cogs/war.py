@@ -6,7 +6,8 @@ from utils.functions import (
     getFormattedMemberKillCounts,
     getAllianceName,
     getKillCount,
-    getWarPointsChannel
+    getWarPointsChannel,
+    getTotalKillCounts
 )
 from utils.db import incrementMemberKillCount, setWarPointsChannel
 import math as m
@@ -162,6 +163,7 @@ class WarCog:
 
         # get this servers violations, and determine number of pages
         results = getMemberKillCounts(ctx.guild.id, alliance)
+        allianceTotal = getTotalKillCounts(ctx.guild.id)
         numPages = m.ceil(len(results) / maxPage)
         pageEnd = maxPage if len(results) >= maxPage else len(results)
 
@@ -169,7 +171,7 @@ class WarCog:
         killList = getFormattedMemberKillCounts(results[idx:pageEnd])
         embed = discord.Embed(title='**Member Kill Counts**', description=intro+spacer+killList+spacer[1::], color=000000)
         embed.set_author(name=title, icon_url=ctx.guild.icon_url)
-        embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
+        embed.set_footer(text='SECURE CONNECTION: true | Total Kills:{} | pg {}/{}'.format(allianceTotal, page, numPages))
         msg = await ctx.send(embed=embed)
 
         try:
@@ -177,7 +179,7 @@ class WarCog:
                 killList = getFormattedMemberKillCounts(results[idx:pageEnd])
                 embed = discord.Embed(title='**Member Kill Counts**', description=intro+spacer+killList+spacer[1::], color=000000)
                 embed.set_author(name=title, icon_url=ctx.guild.icon_url)
-                embed.set_footer(text='SECURE CONNECTION: true | {}/{}'.format(page, numPages))
+                embed.set_footer(text='SECURE CONNECTION: true | Total Kills:{} | pg {}/{}'.format(allianceTotal, page, numPages))
                 await msg.edit(embed=embed)
 
 
