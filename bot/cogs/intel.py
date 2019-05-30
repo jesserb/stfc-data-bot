@@ -184,7 +184,7 @@ class IntelCog:
                 )
             elif args[0].lower() == 'cog':
                 info = '{}**Council Of Guardians**\n{}{}'.format(
-                    spacer, descDict["cog"]+'\n' if infoDict["cog"] else '*No Current info on Cog Alliances*\n', spacer
+                    spacer, infoDict["cog"]+'\n' if infoDict["cog"] else '*No Current info on Cog Alliances*\n', descDict["cog"], spacer
                 )
             else:
                 msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
