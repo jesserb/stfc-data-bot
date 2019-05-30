@@ -225,6 +225,23 @@ def getAllies(serverId):
     return ''
 
 
+def getCOG(serverId):
+    sql = '''
+        SELECT AllianceID
+        FROM AllianceIntelligence
+        WHERE ServerID={}
+        AND COGNAP=1
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        reduced = reduceResults(resp)
+        strResult = ''
+        for r in reduced:
+            strResult += '{}, '.format(r) 
+        return strResult
+    return ''
+
+
 def getPlayerKos(serverId):
     sql = '''
         SELECT AllianceID
@@ -335,6 +352,18 @@ def getAlliesInfo(serverId):
 def getNapInfo(serverId):
     sql = '''
         Select NAPInfo
+        FROM GeneralAllianceInfo
+        WHERE ServerID={}
+    '''.format(serverId)
+    resp = queryDatabase(sql)
+    if len(resp):
+        return resp[0][0]
+    return ''
+
+
+def getCogInfo(serverId):
+    sql = '''
+        Select COGInfo
         FROM GeneralAllianceInfo
         WHERE ServerID={}
     '''.format(serverId)

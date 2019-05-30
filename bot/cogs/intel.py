@@ -15,8 +15,10 @@ from utils.functions import (
     getGalacticKos,
     getNaps,
     getWar,
+    getCOG,
     getWarInfo,
     getKosInfo,
+    getCogInfo,
     hasIntel,
     hasGeneralInfo,
     getROEViolations,
@@ -90,7 +92,8 @@ class IntelCog:
             "nap": getNapInfo(serverId),
             "home": getHomeInfo(serverId),
             "kos": getKosInfo(serverId),
-            "war": getWarInfo(serverId)
+            "war": getWarInfo(serverId),
+            "cog": getCogInfo(serverId)
         }
         allianceStandingDict = {
             "ally": 0,
@@ -98,7 +101,8 @@ class IntelCog:
             "playerKos": 0,
             "allianceKos": 0,
             "galacticKos": 0,
-            "war": 0
+            "war": 0,
+            "cog": 0
         }
         infoDict = {
             "aoa": getAllies(serverId),
@@ -106,7 +110,8 @@ class IntelCog:
             "playerKos": getPlayerKos(serverId),
             "allianceKos": getAllianceKos(serverId),
             "galacticKos": getGalacticKos(serverId),
-            "war": getWar(serverId)
+            "war": getWar(serverId),
+            "cog": getCOG(serverId)
         }
         intro = '[OPENING] Secure connection...\n'
         intro += '*Transmitting sensitive data.. ...*\n\n'
@@ -119,11 +124,12 @@ class IntelCog:
             if not hasIntel(serverId) and not hasGeneralInfo(serverId):
                 info = '{}\n**No Current Intel.....**\n{}'.format(spacer, spacer)
             else:
-                embed = discord.Embed(title='Confidential Intel for {}\n'.format(allianceId), description='*{}*'.format(intro), color=000000)
+                embed = discord.Embed(title='Confidential Intel for {}\n'.format(allianceId), description='{}'.format(intro), color=000000)
                 embed.set_author(name=title, icon_url=ctx.guild.icon_url)
                 embed.add_field(name='**{} Home System**'.format(allianceId), value=descDict["home"]+'\n**{}**'.format(spacer) if descDict["home"] else '*No home system*\n', inline=False)
-                embed.add_field(name='**Allies**', value=getFieldIntel(infoDict["aoa"], 10) if infoDict["aoa"] else '*No Allied Alliances*', inline=True)
-                embed.add_field(name='**NAPs**', value=getFieldIntel(infoDict["nap"], 10) if infoDict["nap"] else '*No NAPs*', inline=True)
+                embed.add_field(name='**Allies**', value=getFieldIntel(infoDict["aoa"], 10) if infoDict["aoa"] else '*No Allied Alliances*', inline=False)
+                embed.add_field(name='**NAPs**', value=getFieldIntel(infoDict["nap"], 10) if infoDict["nap"] else '*No NAPs*', inline=False)
+                embed.add_field(name='**COG NAPs**', value=getFieldIntel(infoDict["cog"], 10) if infoDict["cog"] else '*No COG NAPs*', inline=False)
                 embed.add_field(name='**Player KOS List**', value=getFieldIntel(infoDict["playerKos"], 100) if infoDict["playerKos"] else '*No KOS Players*', inline=False)
                 embed.add_field(name='**Alliance KOS List**', value=getFieldIntel(infoDict["allianceKos"], 100) if infoDict["allianceKos"] else '*No KOS Alliances*', inline=False)
                 embed.add_field(name='**Galactic KOS List**', value=getFieldIntel(infoDict["galacticKos"], 100) if infoDict["galacticKos"] else '*No Galactic KOS*', inline=False)
@@ -176,10 +182,14 @@ class IntelCog:
                 info = '{}**Home System**\n{}{}'.format(
                     spacer, descDict["home"]+'\n' if descDict["home"] else '*No Current Home System*\n', spacer
                 )
+            elif args[0].lower() == 'cog':
+                info = '{}**Council Of Guardians**\n{}{}'.format(
+                    spacer, descDict["cog"]+'\n' if infoDict["cog"] else '*No Current info on Cog Alliances*\n', spacer
+                )
             else:
                 msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
                 msg += 'When **intel** command with single argument is used, the argument must be **on player/players**, **ROE**, **ALLIES**, **KOS**, '
-                msg += '**NAP**, **HOME** or **WARS**.\nE.g `.intel WARS`, `.intel ALLIES`, `.intel on players`.'
+                msg += '**NAP**, **COG**, **HOME** or **WARS**.\nE.g `.intel WARS`, `.intel ALLIES`, `.intel on players`.'
                 await ctx.send(msg)
                 return
         
@@ -345,7 +355,7 @@ class IntelCog:
 
 
         # Intel is being used to add player or alliance to one of the defined lists. Do so here
-        elif len(args) and (args[0].lower() == 'ally' or args[0].lower() == 'kos' or args[0].lower() == 'nap' or args[0].lower() == 'war'):
+        elif len(args) and (args[0].lower() == 'ally' or args[0].lower() == 'kos' or args[0].lower() == 'nap' or args[0].lower() == 'war' or args[0].lower() == 'cog'):
             if len(args) > 3 and args[0].lower() != 'kos':
                 msg = '{}, **Improper use of command!**\n'.format(ctx.message.author.mention)
                 msg += 'When **intel {}** sequence used, you cannot have more than 3 total arguments. '.format(args[0].upper())
@@ -415,9 +425,9 @@ class IntelCog:
                             allianceStandingDict["allianceKos"] = 0
                         else:
                             allianceStandingDict["allianceKos"] = 1                       
-                    saveIntellegence(serverId, args[2].upper(), allianceStandingDict)
+                    saveIntellegence(serverId, args[2], allianceStandingDict)
             else:
-                saveIntellegence(serverId, args[2].upper(), allianceStandingDict)
+                saveIntellegence(serverId, args[2], allianceStandingDict)
 
             await ctx.send('{}, **{} entry {} Saved**.'.format(ctx.message.author.mention,args[0].upper(), args[2].upper()))  
             return
