@@ -491,7 +491,7 @@ def getSearchQuerys(args, footer, resource, region, tier):
     # loop through search parameters, and set resource, region, and tier variable
     for arg in args:
         arg = str(arg)
-        if arg.lower() == 'crystal' or arg.lower() == 'ore' or arg.lower() == 'gas' or arg.lower() == 'dilithium':
+        if arg.lower() == 'crystal' or arg.lower() == 'ore' or arg.lower() == 'gas' or arg.lower() == 'dilithium' or arg.lower() == 'latinum':
             footer += ' "{}" '.format(arg) # add filter name to footer for info purposes
             resource = arg
         if arg.lower() == 'federation' or arg.lower() == 'romulan' or arg.lower() == 'klingon' or arg.lower() == 'neutral':
@@ -880,6 +880,8 @@ def hasSTFCEmojis(emojis):
             numEmojisFound += 1
         if e.name.lower() == 'dilithium':
             numEmojisFound += 1
+        if e.name.lower() == 'latinum':
+            numEmojisFound += 1
         if e.name.lower() == 'ore':
             numEmojisFound += 1
         if e.name.lower() == 'federation':
@@ -898,13 +900,13 @@ def hasSTFCEmojis(emojis):
             numEmojisFound += 1
         if e.name[0] == '4':
             numEmojisFound += 1
-    return numEmojisFound == 12
+    return numEmojisFound == 13
 
 
 # reaction: A discord reaction object
 def checkForSTFCEmoji(reaction):
     try:
-        if reaction.emoji.name== 'crystal' or reaction.emoji.name == 'ore' or reaction.emoji.name == 'gas' or reaction.emoji.name == 'dilithium':
+        if reaction.emoji.name== 'crystal' or reaction.emoji.name == 'ore' or reaction.emoji.name == 'gas' or reaction.emoji.name == 'dilithium' or reaction.emoji.name == 'latinum':
             return True
         if reaction.emoji.name == 'federation' or reaction.emoji.name == 'romulan' or reaction.emoji.name == 'klingon' or reaction.emoji.name == 'neutral':
             return True
