@@ -510,10 +510,13 @@ def getSearchQuerys(args, footer, resource, region, tier):
 
 #  nickname: string representation of users server nickname
 def getAllianceIdFromNick(nickname):
-    nick = nickname.split()[0]
-    if (nick and nick[0] == '[' and nick[-1] == ']'):
-        return nick[1:(len(nick)-1)]
-    return None
+    try:
+        nick = nickname.split()[0]
+        if (nick and nick[0] == '[' and nick[-1] == ']'):
+            return nick[1:(len(nick)-1)]
+        return None
+    except:
+        return None
 
 
 # members: list of discord member objects

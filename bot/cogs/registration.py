@@ -117,6 +117,7 @@ class RegistrationCog:
         author             = ctx.message.author                 # the user: default to message sender
         newUser            = None
         allianceId         = getAllianceIdFromNick(author.nick)
+        allianceId         = allianceId if allianceId else getMasterAllianceId(ctx.guild.id)
         allianceName       = getAllianceName(ctx.guild.id)
         server             = ctx.guild                          # server the command was used on
         memberRoles        = getMemberRoles(server.id)
@@ -124,6 +125,7 @@ class RegistrationCog:
         allyRoles          = getAllyRoles(server.id)
         ambassadorCategory = getAmbassadorCategory(server.id)
         channel            = ''                                 # placeholder for new channel name
+
 
         # permissions for users/roles that can use new channel
         show = discord.PermissionOverwrite(
