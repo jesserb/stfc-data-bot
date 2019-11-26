@@ -21,7 +21,7 @@ from utils.constants import ORDERED_REACTIONS, IN_MESSAGE_REACTIONS, GITHUB
 
 
 
-class SetupCog:
+class SetupCog(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot

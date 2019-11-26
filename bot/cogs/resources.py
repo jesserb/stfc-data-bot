@@ -17,7 +17,7 @@ import math as m
 from utils.db import saveResource
 
 
-class ResourcesCog:
+class ResourcesCog(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot

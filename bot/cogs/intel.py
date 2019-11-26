@@ -36,7 +36,7 @@ from utils.constants import GITHUB
 import math as m
 
 
-class IntelCog:
+class IntelCog(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot

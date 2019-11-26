@@ -6,7 +6,7 @@ from utils.constants import GITHUB
 
 
 
-class HelpCog:
+class HelpCog(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot

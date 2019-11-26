@@ -12,7 +12,7 @@ initial_extensions = [
     'cogs.intel',
     'cogs.test_cog',
     'cogs.war'
-    ]
+]
 
 
 # determine which bot to load up

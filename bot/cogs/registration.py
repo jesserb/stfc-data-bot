@@ -28,7 +28,7 @@ from utils.functions import (
 
 
 
-class RegistrationCog:
+class RegistrationCog(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot

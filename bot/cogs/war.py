@@ -13,7 +13,7 @@ from utils.db import incrementMemberKillCount, setWarPointsChannel
 import math as m
 
 
-class WarCog:
+class WarCog(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot
