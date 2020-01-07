@@ -20,7 +20,7 @@ class WarCog(commands.Cog):
         self.next = '\N{BLACK RIGHTWARDS ARROW}'
         self.prev = '\N{LEFTWARDS BLACK ARROW}'
     
-
+    @commands.Cog.listener()
     async def on_message(self, message):
 
         channel = getWarPointsChannel(message.guild.id)
