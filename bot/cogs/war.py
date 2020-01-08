@@ -30,7 +30,6 @@ class WarCog(commands.Cog):
             name = ''
             test = ''
             try: #[] RULE
-                print('lvl 1')
                 # first assume nickname with [TAG] name
                 test = allianceId = message.author.nick.split(']')[1]
                 allianceId = message.author.nick.split(']')[0][1::]
@@ -43,45 +42,51 @@ class WarCog(commands.Cog):
                     name = message.author.name.split(' ')[1]
                 except:
                     try:
-                        # If failed assume name with [TAG]name
-                        test = allianceId = message.author.name.split(']')[1]
-                        allianceId = message.author.name.split(']')[0][1::]
-                        name = message.author.name.split(']')[1]
+                        # If failed assume nickname with [TAG]name
+                        test = allianceId = message.author.nick.split(']')[1]
+                        allianceId = message.author.nick.split(']')[0][1::]
+                        name = message.author.nick.split(']')[1]
                     except:
-                        try: #() RULE
-                            # first assume nickname with (TAG) name
-                            test = allianceId = message.author.nick.split(')')[1]
-                            allianceId = message.author.nick.split(')')[0][1::]
-                            name = message.author.nick.split(' ')[1]
+                        try:
+                            # If failed assume name with [TAG]name
+                            test = allianceId = message.author.name.split(']')[1]
+                            allianceId = message.author.name.split(']')[0][1::]
+                            name = message.author.name.split(']')[1]
                         except:
-                            try:
-                                # If failed assume name with (TAG) name
-                                test = allianceId = message.author.name.split(')')[1]
-                                allianceId = message.author.name.split(')')[0][1::]
-                                name = message.author.name.split(' ')[1]
+                            try: #() RULE
+                                # first assume nickname with (TAG) name
+                                test = allianceId = message.author.nick.split(')')[1]
+                                allianceId = message.author.nick.split(')')[0][1::]
+                                name = message.author.nick.split(' ')[1]
                             except:
                                 try:
-                                    # If failed assume name with (TAG)name
+                                    # If failed assume name with (TAG) name
                                     test = allianceId = message.author.name.split(')')[1]
                                     allianceId = message.author.name.split(')')[0][1::]
-                                    name = message.author.name.split(')')[1]
+                                    name = message.author.name.split(' ')[1]
                                 except:
-                                    try: #< RULE
-                                        # first assume nickname with <TAG> name
-                                        test = allianceId = message.author.nick.split('>')[1]
-                                        allianceId = message.author.nick.split('>')[0][1::]
-                                        name = message.author.nick.split(' ')[1]
+                                    try:
+                                        # If failed assume name with (TAG)name
+                                        test = allianceId = message.author.name.split(')')[1]
+                                        allianceId = message.author.name.split(')')[0][1::]
+                                        name = message.author.name.split(')')[1]
                                     except:
-                                        try:
-                                            # If failed assume name with <TAG> name
-                                            test = allianceId = message.author.name.split('>')[1]
-                                            allianceId = message.author.name.split('>')[0][1::]
-                                            name = message.author.name.split(' ')[1]
+                                        try: #< RULE
+                                            # first assume nickname with <TAG> name
+                                            test = allianceId = message.author.nick.split('>')[1]
+                                            allianceId = message.author.nick.split('>')[0][1::]
+                                            name = message.author.nick.split(' ')[1]
                                         except:
-                                            # If failed assume name with <TAG>name
-                                            test = allianceId = message.author.name.split('>')[1]
-                                            allianceId = message.author.name.split('>')[0][1::]
-                                            name = message.author.name.split('>')[1]
+                                            try:
+                                                # If failed assume name with <TAG> name
+                                                test = allianceId = message.author.name.split('>')[1]
+                                                allianceId = message.author.name.split('>')[0][1::]
+                                                name = message.author.name.split(' ')[1]
+                                            except:
+                                                # If failed assume name with <TAG>name
+                                                test = allianceId = message.author.name.split('>')[1]
+                                                allianceId = message.author.name.split('>')[0][1::]
+                                                name = message.author.name.split('>')[1]
 
 
             incrementMemberKillCount(message.guild.id, message.author.id, name, allianceId)
