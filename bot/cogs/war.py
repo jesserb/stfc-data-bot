@@ -9,7 +9,7 @@ from utils.functions import (
     getWarPointsChannel,
     getTotalKillCounts
 )
-from utils.db import incrementMemberKillCount, setWarPointsChannel
+from utils.db import incrementMemberKillCount, setWarPointsChannel, resetWarPoints
 import math as m
 
 
@@ -83,10 +83,15 @@ class WarCog(commands.Cog):
                                                 allianceId = message.author.name.split('>')[0][1::]
                                                 name = message.author.name.split(' ')[1]
                                             except:
-                                                # If failed assume name with <TAG>name
-                                                test = allianceId = message.author.name.split('>')[1]
-                                                allianceId = message.author.name.split('>')[0][1::]
-                                                name = message.author.name.split('>')[1]
+                                                try:
+                                                    # If failed assume name with <TAG>name
+                                                    test = allianceId = message.author.name.split('>')[1]
+                                                    allianceId = message.author.name.split('>')[0][1::]
+                                                    name = message.author.name.split('>')[1]
+                                                except:
+                                                    #user is doing somewhere wierd... acccept it
+                                                    allianceId = '???'
+                                                    name = message.author.name
 
 
             incrementMemberKillCount(message.guild.id, message.author.id, name, allianceId)
@@ -140,10 +145,28 @@ class WarCog(commands.Cog):
     @commands.command()
     async def warpoints(self, ctx, allianceId=''):
 
+        isAdmin = ctx.message.author.guild_permissions.administrator
+
         if allianceId.lower() == 'begin':
+            # ERROR: Admin required to spin up warpoints
+            if not isAdmin:
+                await ctx.message.channel.send('{}, you must be an admin on this server to spin up warpoints.'.format(ctx.message.author.mention))
+                return
+
             setWarPointsChannel(ctx.guild.id, ctx.channel.name)
             msg = '.\n{}, This channel **({})** has been set up for warpoints.'.format(ctx.message.author.mention, ctx.channel.name)
             msg += '\n`**Screenshots of kills will now be recorded here** :smiling_imp:'
+            await ctx.message.channel.send(msg)
+            return
+
+        if allianceId.lower() == 'reset':
+            # ERROR: Admin required to spin up warpoints
+            if not isAdmin:
+                await ctx.message.channel.send('{}, you must be an admin on this server to reset alliance warpoints.'.format(ctx.message.author.mention))
+                return
+
+            resetWarPoints(ctx.guild.id)
+            msg = '.\n{}, All warpoints have been reset for your alliance.'.format(ctx.message.author.mention)
             await ctx.message.channel.send(msg)
             return
 
