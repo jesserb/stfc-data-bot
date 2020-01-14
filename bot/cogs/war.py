@@ -9,7 +9,7 @@ from utils.functions import (
     getWarPointsChannel,
     getTotalKillCounts
 )
-from utils.db import incrementMemberKillCount, setWarPointsChannel, resetWarPoints
+from utils.db import incrementMemberKillCount, setWarPointsChannel #, resetWarPoints
 import math as m
 
 
@@ -159,16 +159,16 @@ class WarCog(commands.Cog):
             await ctx.message.channel.send(msg)
             return
 
-        if allianceId.lower() == 'reset':
-            # ERROR: Admin required to spin up warpoints
-            if not isAdmin:
-                await ctx.message.channel.send('{}, you must be an admin on this server to reset alliance warpoints.'.format(ctx.message.author.mention))
-                return
+        # if allianceId.lower() == 'reset':
+        #     # ERROR: Admin required to spin up warpoints
+        #     if not isAdmin:
+        #         await ctx.message.channel.send('{}, you must be an admin on this server to reset alliance warpoints.'.format(ctx.message.author.mention))
+        #         return
 
-            resetWarPoints(ctx.guild.id)
-            msg = '.\n{}, All warpoints have been reset for your alliance.'.format(ctx.message.author.mention)
-            await ctx.message.channel.send(msg)
-            return
+        #     resetWarPoints(ctx.guild.id)
+        #     msg = '.\n{}, All warpoints have been reset for your alliance.'.format(ctx.message.author.mention)
+        #     await ctx.message.channel.send(msg)
+        #     return
 
         title = getAllianceName(ctx.guild.id)
         spacer = '\n--------------------------------------------------\n'
